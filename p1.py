@@ -1,5 +1,5 @@
 #Ссылка на контест для этой задачи (assignment_final): https://contest.yandex.ru/contest/56809/problems/
-import numpy as np;
+import numpy as np;#Выложено в GitHub 2025-10-12 11-16
 import json,os,pathlib,pickle,random,string,time;
 from sklearn.preprocessing import StandardScaler;
 from sklearn.model_selection import train_test_split,KFold,StratifiedKFold;
@@ -1231,6 +1231,7 @@ while command_num>-1:
         create_coefs_and_bias_files(model_ids=model_ids_list,digits_round_min=digits_round_min,digits_round_max=digits_round_max);
 
 print(f'Работа программы завершена');
+
 
 
 
