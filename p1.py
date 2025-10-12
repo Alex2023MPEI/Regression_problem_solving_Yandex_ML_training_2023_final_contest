@@ -1,5 +1,5 @@
 #Ссылка на контест для этой задачи (assignment_final): https://contest.yandex.ru/contest/56809/problems/
-import numpy as np;#Выложено в GitHub 2025-10-12 11-16
+import numpy as np;
 import json,os,pathlib,pickle,random,string,time;
 from sklearn.preprocessing import StandardScaler;
 from sklearn.model_selection import train_test_split,KFold,StratifiedKFold;
@@ -457,6 +457,34 @@ def run_one_model_experiment_v5(num_features_select_from_all_min:int=5,num_featu
 
 
     # 2. Разделение на train (для CV) и final test (только для оценки!)
+    #Кросс-валидация и оценка качества выполняется по схеме:
+    """
+    2.1. Все открытые данные opened_data (100%) делятся на train_cv (80%) и test_final (20%)
+    2.2. Данные train_cv делятся на 10 фолдов по 80%*0.1=8%, для каждого из 10 фолдов получается X_train_fold (из 9 фолдов или
+    72% от opened_data) и X_valid_fold (из 1 фолда или 8% от opened_data)
+    2.3. Для каждого из 10 фолдов выполняется обучение на X_train_fold и вычисление метрики на X_valid_fold. Если значение метрики на
+    X_valid_fold не подходит (например, mse слишком высокое или accuracy слишком низкое), то эта работа с этой моделью с этим набором
+    гиперпараметров прекращается (таким образом, сохраняются только те модели, у которых на каждом из 10 фолдах достаточно хороший
+    результат)
+    2.4. После обработки всех 10 фолдов и сохранения их метрик в список valid_scores вычисляется среднее значение метрики по всем 10
+    фолдам (сохраняется в переменную score_valid_mean)
+    2.5. Затем выполняется обучение модели с этим набором гиперпараметров на train_cv (то есть на всех 10 фолдах) и проверка на
+    test_final (на данных, которые НЕ использовались в кросс-валидации), значение метрики обученной на train_cv и проверенной на
+    test_final модели записывается в переменную score_test
+    2.6. Затем модель с этим набором гиперпараметров обучается на всех 100% открытых данных и сохраняется в pkl файл
+    P.S. Помимо модели на каждом из этапов обучение выполняется и для scaler (экземпляр класса StandardScaler из sklearn). Обучение
+    scaler (метод fit) всегда выполняется на тех же данных, что и обучение модели, чтобы предотвратить утечку. Для каждого из 10 фолдов
+    своя модель (model_cross_valid) и свой scaler (scaler_cross_valid), для оценивания качества на test_final (20% открытых данных)
+    своя модель (model_for_final_test) и свой scaler (scaler_for_final_test), для сохранения в pkl файл тоже своя модель
+    (model_production) и свой scaler (scaler_production).
+    """
+    #Вот ссылки на картинки, на которых графически изображён используемый тут способ валидации:
+    #1. https://www.researchgate.net/publication/330765732/figure/fig2/AS:722767586553857@1549332629727/Schematic-for-10-fold-cross-validation-A-test-set-is-held-out-from-the-cross-validation.ppm
+    #2. https://i.pinimg.com/736x/97/97/61/979761cf1e85d9dd7a088eb2a95564f9.jpg
+    #3. https://raw.githubusercontent.com/flatiron-school/ds-model_validation/6f7ddd3365926421453e3b48217bfacec9748d74/img/k_folds.png
+    #4. https://i.ytimg.com/vi/kituDjzXwfE/maxresdefault.jpg
+    #5. https://i-hun.github.io/da_in_special_enviroments_2018/4_metrics/img/cv-2.png
+    #6. https://help.qlik.com/en-US/cloud-services/Subsystems/Hub/Content/Resources/Images/AutomatedMachineLearning/holdout-cross-validation-default.png
     split_random_state:int=int(time.time()*(10**9))%(2**32);#Количество наносекунд с начала эпохи Unix -> [0, 4294967295]
     hyperparam_random_state:int=int(random.uniform(a=0.0,b=1e20))%(2**32);
     #print(f'split_random_state: {split_random_state}, hyperparam_random_state: {hyperparam_random_state}');
@@ -551,7 +579,44 @@ def run_one_model_experiment_v5(num_features_select_from_all_min:int=5,num_featu
             elif model_type=='GradientBoostingRegressor':model_hyperparams={'loss':random.choice(seq=['squared_error','absolute_error','huber','quantile']),'learning_rate':10**random.uniform(a=-2,b=0),'n_estimators':random.randint(a=20,b=300),'subsample':random.uniform(a=0.0,b=1.0),'criterion':random.choice(seq=['friedman_mse','squared_error']),'min_samples_split':random.uniform(a=0.0,b=1.0),'min_samples_leaf':random.uniform(a=0.0,b=1.0),'min_weight_fraction_leaf':random.uniform(a=0.0,b=0.5),'max_depth':random.randint(a=1,b=7),'min_impurity_decrease':random.uniform(a=0.0,b=1.0),'max_features':random.choice(seq=['sqrt','log2','sqrt','log2','sqrt','log2','sqrt','log2',0.01,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1.0,None,None,None,None,None,None]),'alpha':random.uniform(a=0.0,b=1.0),'max_leaf_nodes':random.randint(a=2,b=100),'warm_start':random.choice(seq=[True,False]),'validation_fraction':random.uniform(a=0.0,b=0.4),'n_iter_no_change':random.randint(a=5,b=20),'tol':10**random.uniform(a=-6,b=-2),'ccp_alpha':random.uniform(a=0.0,b=100.0),'random_state':hyperparam_random_state};
             elif model_type=='HistGradientBoostingRegressor':model_hyperparams={'loss':random.choice(seq=['squared_error','absolute_error','gamma','poisson','quantile']),'quantile':random.uniform(a=0.0,b=1.0),'learning_rate':10**random.uniform(a=-2,b=0),'max_iter':random.randint(a=20,b=200),'max_leaf_nodes':random.randint(a=2,b=60),'max_depth':random.randint(a=2,b=10),'min_samples_leaf':random.randint(a=5,b=50),'l2_regularization':random.uniform(a=0.0,b=1.0),'max_features':random.uniform(a=0.2,b=1.0),'max_bins':random.randint(a=10,b=255),'warm_start':random.choice(seq=[True,False]),'early_stopping':random.choice(seq=['auto',True]),'scoring':random.choice(seq=['loss',None]),'validation_fraction':random.uniform(a=0.05,b=0.25),'n_iter_no_change':random.randint(a=3,b=30),'tol':10**random.uniform(a=-11,b=-3),'random_state':hyperparam_random_state};
             elif model_type=='RandomForestRegressor':model_hyperparams={'n_estimators':random.randint(a=20,b=200),'criterion':random.choice(seq=['squared_error','absolute_error','friedman_mse','poisson']),'max_depth':random.randint(a=2,b=20),'min_samples_split':random.uniform(a=0.0,b=1.0),'min_samples_leaf':random.uniform(a=0.0,b=1.0),'min_weight_fraction_leaf':random.uniform(a=0.0,b=0.5),'max_features':random.choice(seq=['sqrt','log2','sqrt','log2','sqrt','log2','sqrt','log2','sqrt','log2',0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1.0]),'min_impurity_decrease':random.uniform(a=0.0,b=0.2),'bootstrap':random.choice(seq=[True,False]),'warm_start':random.choice(seq=[True,False]),'ccp_alpha':random.uniform(a=0.0,b=1.0),'max_samples':random.uniform(a=0.0,b=1.0),'n_jobs':-1,'random_state':hyperparam_random_state};
-            
+    """
+    Q: Почему каждый раз гиперпараметры выбираются случайным образом вместо того, чтобы использовать встроенный класс GridSearchCV
+    или RandomizedSearchCV?
+    A: Метод подбора гиперпараметров RandomSearch очень легко реализовать вручную (что тут фактически и сделано). Его реализация
+    вручную даёт больше гибкости в том, как именно он будет работать. Важные преимущества реализации Random Search вручную:
+    1. В функции GridSearchCV и RandomizedSearchCV передаётся параметр estimator:estimator object, который является конкретной
+    моделью. То есть при использовании этих функций происходит перебор гиперпараметров модели, но для переборов моделей нужно
+    копировать и вставлять код снова с новой моделью. При ручной реализации в одной функции начала происходит выбор модели, а затем
+    её гиперпараметров (причём гиперпараметры выбираются в зависимости от конкретной модели, например у модели Ridge нет
+    гиперпараметра epsilon).
+    2. Функции GridSearchCV и RandomizedSearchCV сохраняют только лучший набор гиперпараметров и результат (score) модели с этим
+    набором. При ручной реализации функция сохраняет все наборы гиперпараметров, с которыми модель показала достаточно высокое качесто
+    на каждом из 10 фолдов. Проблема возможного сохранения слишком большого количества информации в логах и количества pkl файлов
+    решается с помощью регулирования параметров score_valid_min_threshold и score_valid_max_threshold. Иметь несколько наборов
+    гиперпараметров, а не только один самый лучший, полезно для того, чтобы можно было затем выполнить ансамблирование (усреднение
+    предсказаний нескольких моделей, с разными наборами гиперпараметров, возможно и разных типов моделей). Усреднение моделей
+    разных типов должно снизить переобучение исходя из предположения, что модели разных типов слабо связаны между собой, значит между
+    их предсказаниями низкая корреляция, значит их усреднение значительно больше снизит дисперсию, чем если бы это были предсказания
+    экземпляров модели одного типа, отличающихся только наборами гиперпараметров.
+    3. Функции GridSearchCV и RandomizedSearchCV определяют свои атрибуты (присваивают своим атрибутам значения) только после
+    завершения работы метода fit (который вычисляет метрику для каждого набора гиперпараметров). Проблема в том, что если изначально
+    задать слишком много комбинаций гиперпараметров (с помощью param_grid для GridSearchCV или n_iter для RandomizedSearchCV), то
+    перебор всех комбинаций может занимать слишком много времени. Если в процессе этого перебора возникнет необходимость его прервать,
+    то результаты всех выполненных вычислений будут потеряны. Ручная реализация позволяет регулировать количество итераций с помощью
+    переменной num_of_experiments (внешней по отношению к функции run_one_model_experiment_v5). При этом на каждой итерации если модель с
+    этим набором гиперпараметров показывает достаточное качество на всех 10 фолдах, то информация об этой модели записывается в логи
+    (включая тип модели и значения всех гиперпараметров) и эта модель (вместе со своим scaler) сохраняется в pkl файл. Таким образом,
+    даже если в процессе многократного вызова функции будет необходимо прервать работу программы, все полученные к этому моменту
+    результаты сохранятся, время работы не будет потрачено впустую.
+    4. Функция run_one_model_experiment_v5 позволяет не проводить перебор наборов гиперпараметров, а обучить одну модель с
+    фиксированным набором гиперпараметров. Это достигается с помощью параметров model_type и model_hyperparams. Если эти параметры
+    не заданы или заданы как None, то функция работает в режиме перебора типов моделей и комбинаций гиперпараметров (ожидается её
+    вызов в цикле много раз). Если эти параметры заданы не как None, то функция выполняет все те же действия (кросс-валидация,
+    оценка качества на отложенных 20% открытых данных, обучение итоговой модели на всех 100% открытых данных), но уже строго с
+    моделью заданного типа model_type и заданным набором гиперпараметров model_hyperparams.
+    """
+
+
     # 4. Подготовка кросс-валидации
     if problem_type=='classification':K_Fold:StratifiedKFold=StratifiedKFold(n_splits=num_folds,shuffle=True,random_state=split_random_state)
     elif problem_type=='regression':K_Fold:KFold=KFold(n_splits=num_folds,shuffle=True,random_state=split_random_state);
@@ -559,8 +624,7 @@ def run_one_model_experiment_v5(num_features_select_from_all_min:int=5,num_featu
     #мультикласс). В регрессии же целевая переменная непрерывная (continuous), и StratifiedKFold не может работать с такими данными.
     
     #scaler:StandardScaler=StandardScaler();
-    valid_scores=[];
-
+    valid_scores:list[float]=[];
     print(f"Начинаем кросс-валидацию модели {model_type} с гиперпараметрами: {model_hyperparams}...")
     for fold_num,(train_index,valid_index) in enumerate(K_Fold.split(X=X_train_cv,y=y_train_cv)):
         print(f"  Обрабатываем фолд {fold_num+1}/{num_folds}...",end=' ');
@@ -575,8 +639,8 @@ def run_one_model_experiment_v5(num_features_select_from_all_min:int=5,num_featu
         # 4.2 & 4.3 Масштабирование
         scaler_cross_valid:StandardScaler=StandardScaler();#Старый scaler (если он был в переменной) перезаписывается новым экземпляром класса
         scaler_cross_valid.fit(X_train_fold);#fit только на train, без valid
-        X_train_fold_scaled=scaler_cross_valid.transform(X_train_fold)
-        X_valid_fold_scaled=scaler_cross_valid.transform(X_valid_fold)
+        X_train_fold_scaled=scaler_cross_valid.transform(X_train_fold);
+        X_valid_fold_scaled=scaler_cross_valid.transform(X_valid_fold);
 
         # 4.4 & 4.5 Обучение и оценка
         if problem_type=='classification':
@@ -725,9 +789,9 @@ def run_one_model_experiment_v5(num_features_select_from_all_min:int=5,num_featu
         elif model_type=='RandomForestRegressor':model_for_final_test=RandomForestRegressor(**model_hyperparams);
 
 
-    model_for_final_test.fit(X_train_cv_scaled, y_train_cv);#Обучение на 80% открытых данных
+    model_for_final_test.fit(X_train_cv_scaled,y_train_cv);#Обучение на 80% открытых данных
 
-    y_test_pred = model_for_final_test.predict(X_test_final_scaled);#Тестирование на 20% открытых данных
+    y_test_pred=model_for_final_test.predict(X_test_final_scaled);#Тестирование на 20% открытых данных
     if problem_type=='classification':
         if score_type=='accuracy_score':score_test=accuracy_score(y_true=y_test_final,y_pred=y_test_pred);
         elif score_type=='auc':score_test=auc(x=y_test_final,y=y_test_pred);
@@ -1231,7 +1295,6 @@ while command_num>-1:
         create_coefs_and_bias_files(model_ids=model_ids_list,digits_round_min=digits_round_min,digits_round_max=digits_round_max);
 
 print(f'Работа программы завершена');
-
 
 
 
