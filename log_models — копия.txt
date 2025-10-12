@@ -1,0 +1,1027 @@
+
+--- Model ID: 7R78D6V7971TLK4W ---
+n_features_all: 392
+n_features_selected: 14
+selected_indexes: [218, 307, 56, 266, 63, 67, 77, 336, 105, 376, 59, 73, 257, 42]
+Model type: LassoLarsIC
+Hyperparameters: {'criterion': 'bic', 'fit_intercept': True, 'max_iter': 1211, 'eps': 1.8435801028968375e-15, 'positive': True, 'noise_variance': 0.003045799623503264}
+split_random_state: 25546752
+Score type: mean_squared_error
+Validation scores: ['0.088559', '0.066598', '0.083141', '0.095388', '0.087158', '0.093928', '0.079517', '0.095682', '0.092161', '0.088950']
+Mean validation score: 0.087108
+Final test score (holdout): 0.106765
+---------------------------------------
+
+--- Model ID: WHBUC5J1DJEBN6H2 ---
+n_features_all: 392
+n_features_selected: 14
+selected_indexes: [218, 307, 56, 266, 63, 67, 77, 336, 105, 376, 59, 73, 257, 42]
+Model type: ARDRegression
+Hyperparameters: {'max_iter': 269, 'tol': 0.000244712586556538, 'alpha_1': 1.7576745454779507e-08, 'alpha_2': 6.468887330475014e-06, 'lambda_1': 7.933700675770898e-06, 'lambda_2': 5.744098626833485e-06, 'compute_score': True, 'threshold_lambda': 8221.323530495922, 'fit_intercept': False}
+split_random_state: 701873664
+Score type: mean_squared_error
+Validation scores: ['0.092446', '0.068617', '0.073191', '0.092483', '0.070498', '0.088054', '0.079182', '0.086178', '0.094660', '0.091643']
+Mean validation score: 0.083695
+Final test score (holdout): 0.120926
+---------------------------------------
+
+--- Model ID: 0WB355FVFR68ZHAI ---
+n_features_all: 392
+n_features_selected: 14
+selected_indexes: [218, 307, 56, 266, 63, 67, 77, 336, 105, 376, 59, 73, 257, 42]
+Model type: HuberRegressor
+Hyperparameters: {'epsilon': 1.322664205380073, 'max_iter': 67, 'alpha': 0.18368509741922115, 'warm_start': True, 'fit_intercept': True, 'tol': 8.566297288323855e-05}
+split_random_state: 547650304
+Score type: mean_squared_error
+Validation scores: ['0.087323', '0.097722', '0.073669', '0.089311', '0.086740', '0.083176', '0.093999', '0.068824', '0.081968', '0.092154']
+Mean validation score: 0.085489
+Final test score (holdout): 0.115757
+---------------------------------------
+
+--- Model ID: M12IN2RPTDF2FSNE ---
+n_features_all: 392
+n_features_selected: 14
+selected_indexes: [218, 307, 56, 266, 63, 67, 77, 336, 105, 376, 59, 73, 257, 42]
+Model type: Lasso
+Hyperparameters: {'alpha': 1.3944527982376558e-05, 'fit_intercept': True, 'max_iter': 1150, 'tol': 4.8605034076558386e-08, 'warm_start': True, 'positive': True, 'selection': 'random', 'random_state': 2307109888}
+split_random_state: 1515183104
+Score type: mean_squared_error
+Validation scores: ['0.081950', '0.082461', '0.075548', '0.096478', '0.095278', '0.087055', '0.093388', '0.092224', '0.089258', '0.088006']
+Mean validation score: 0.088165
+Final test score (holdout): 0.102046
+---------------------------------------
+
+--- Model ID: 3QZ0M12NPTY8AHPU ---
+n_features_all: 392
+n_features_selected: 14
+selected_indexes: [218, 307, 56, 266, 63, 67, 77, 336, 105, 376, 59, 73, 257, 42]
+Model type: ARDRegression
+Hyperparameters: {'max_iter': 666, 'tol': 0.00725501794157615, 'alpha_1': 1.889502885098504e-10, 'alpha_2': 8.45161372299314e-07, 'lambda_1': 2.3473183112303313e-09, 'lambda_2': 3.832002711778786e-06, 'compute_score': False, 'threshold_lambda': 10360.297917293003, 'fit_intercept': True}
+split_random_state: 3118593792
+Score type: mean_squared_error
+Validation scores: ['0.088392', '0.096673', '0.092227', '0.096990', '0.070603', '0.089218', '0.055999', '0.095782', '0.086018', '0.084945']
+Mean validation score: 0.085685
+Final test score (holdout): 0.114312
+---------------------------------------
+
+--- Model ID: RG06FG4TD8HCXUVU ---
+n_features_all: 392
+n_features_selected: 14
+selected_indexes: [218, 307, 56, 266, 63, 67, 77, 336, 105, 376, 59, 73, 257, 42]
+Model type: LassoLarsIC
+Hyperparameters: {'criterion': 'aic', 'fit_intercept': True, 'max_iter': 286, 'eps': 1.1787694662098116e-13, 'positive': False, 'noise_variance': 0.00028316065039357826}
+split_random_state: 1841562112
+Score type: mean_squared_error
+Validation scores: ['0.092221', '0.072074', '0.080855', '0.094321', '0.081233', '0.077418', '0.092862', '0.077277', '0.096196', '0.090425']
+Mean validation score: 0.085488
+Final test score (holdout): 0.113954
+---------------------------------------
+
+--- Model ID: UGQ57EZZFVPI2DCS ---
+n_features_all: 392
+n_features_selected: 14
+selected_indexes: [218, 307, 56, 266, 63, 67, 77, 336, 105, 376, 59, 73, 257, 42]
+Model type: LassoLarsIC
+Hyperparameters: {'criterion': 'bic', 'fit_intercept': True, 'max_iter': 215, 'eps': 1.5860138288969686e-12, 'positive': True, 'noise_variance': 0.0001431903198293431}
+split_random_state: 4254312192
+Score type: mean_squared_error
+Validation scores: ['0.094385', '0.092225', '0.092970', '0.069781', '0.095313', '0.076305', '0.094740', '0.093899', '0.076028', '0.081880']
+Mean validation score: 0.086753
+Final test score (holdout): 0.107798
+---------------------------------------
+
+--- Model ID: F0E0LG5TBCLTFX48 ---
+n_features_all: 392
+n_features_selected: 14
+selected_indexes: [218, 307, 56, 266, 63, 67, 77, 336, 105, 376, 59, 73, 257, 42]
+Model type: ARDRegression
+Hyperparameters: {'max_iter': 313, 'tol': 0.0004013177127395574, 'alpha_1': 2.592567869904771e-06, 'alpha_2': 0.0015395258726256728, 'lambda_1': 5.657557025017426e-08, 'lambda_2': 1.7251344862170468e-09, 'compute_score': False, 'threshold_lambda': 6295.295232984596, 'fit_intercept': True}
+split_random_state: 1894255872
+Score type: mean_squared_error
+Validation scores: ['0.075060', '0.092819', '0.097258', '0.085831', '0.099725', '0.062404', '0.079912', '0.077527', '0.077637', '0.096864']
+Mean validation score: 0.084504
+Final test score (holdout): 0.115119
+---------------------------------------
+
+--- Model ID: ZHVO4T32BP79OHWJ ---
+n_features_all: 392
+n_features_selected: 14
+selected_indexes: [218, 307, 56, 266, 63, 67, 77, 336, 105, 376, 59, 73, 257, 42]
+Model type: LinearRegression
+Hyperparameters: {'fit_intercept': False, 'tol': 3.862423286020656e-09, 'positive': False}
+split_random_state: 3597916928
+Score type: mean_squared_error
+Validation scores: ['0.079024', '0.081916', '0.098981', '0.092306', '0.092074', '0.094088', '0.095467', '0.079052', '0.090013', '0.083845']
+Mean validation score: 0.088677
+Final test score (holdout): 0.101333
+---------------------------------------
+
+--- Model ID: HRTVESP65EVMMAJN ---
+n_features_all: 392
+n_features_selected: 14
+selected_indexes: [218, 307, 56, 266, 63, 67, 77, 336, 105, 376, 59, 73, 257, 42]
+Model type: LassoLarsIC
+Hyperparameters: {'criterion': 'bic', 'fit_intercept': True, 'max_iter': 775, 'eps': 2.0642554400723486e-11, 'positive': True, 'noise_variance': 0.09023015327163536}
+split_random_state: 3137029120
+Score type: mean_squared_error
+Validation scores: ['0.056267', '0.073230', '0.093140', '0.093872', '0.094640', '0.083045', '0.096300', '0.088230', '0.091112', '0.084702']
+Mean validation score: 0.085454
+Final test score (holdout): 0.111517
+---------------------------------------
+
+--- Model ID: B42M8P2Q0FI5S1RN ---
+n_features_all: 392
+n_features_selected: 14
+selected_indexes: [218, 307, 56, 266, 63, 67, 77, 336, 105, 376, 59, 73, 257, 42]
+Model type: ARDRegression
+Hyperparameters: {'max_iter': 144, 'tol': 1.3831304301169771e-05, 'alpha_1': 0.00016830208903116634, 'alpha_2': 6.751703144626185e-10, 'lambda_1': 3.261267007871752e-07, 'lambda_2': 0.005258523599906441, 'compute_score': True, 'threshold_lambda': 9091.230676815392, 'fit_intercept': False}
+split_random_state: 255136000
+Score type: mean_squared_error
+Validation scores: ['0.067102', '0.086956', '0.089635', '0.087190', '0.095294', '0.098493', '0.093606', '0.097909', '0.098516', '0.092210']
+Mean validation score: 0.090691
+Final test score (holdout): 13.803971
+---------------------------------------
+
+--- Model ID: BEPGX7YV74WGU85Y ---
+n_features_all: 392
+n_features_selected: 14
+selected_indexes: [218, 307, 56, 266, 63, 67, 77, 336, 105, 376, 59, 73, 257, 42]
+Model type: ARDRegression
+Hyperparameters: {'max_iter': 490, 'tol': 0.010971691941609405, 'alpha_1': 2.4159505617029643e-05, 'alpha_2': 2.3890617842857335e-08, 'lambda_1': 1.2196762394854274e-10, 'lambda_2': 2.2014775815619508e-06, 'compute_score': True, 'threshold_lambda': 14593.277826624355, 'fit_intercept': False}
+split_random_state: 284382720
+Score type: mean_squared_error
+Validation scores: ['0.078816', '0.084426', '0.088839', '0.090712', '0.079909', '0.092488', '0.094532', '0.098210', '0.073901', '0.089123']
+Mean validation score: 0.087096
+Final test score (holdout): 13.269767
+---------------------------------------
+
+--- Model ID: VSAHN5VXAEEKB24G ---
+n_features_all: 392
+n_features_selected: 14
+selected_indexes: [218, 307, 56, 266, 63, 67, 77, 336, 105, 376, 59, 73, 257, 42]
+Model type: LassoLarsIC
+Hyperparameters: {'criterion': 'bic', 'fit_intercept': False, 'max_iter': 1421, 'eps': 1.3230477624547163e-15, 'positive': False, 'noise_variance': 0.007135236684551565}
+split_random_state: 1859897088
+Score type: mean_squared_error
+Validation scores: ['0.097025', '0.095223', '0.094787', '0.080759', '0.095742', '0.077776', '0.088097', '0.074482', '0.096750', '0.087999']
+Mean validation score: 0.088864
+Final test score (holdout): 0.102561
+---------------------------------------
+
+--- Model ID: 4BP80S3IW30XG52L ---
+n_features_all: 392
+n_features_selected: 14
+selected_indexes: [218, 307, 56, 266, 63, 67, 77, 336, 105, 376, 59, 73, 257, 42]
+Model type: LassoLars
+Hyperparameters: {'alpha': 2.1583473102427717e-05, 'fit_intercept': True, 'max_iter': 335, 'eps': 7.4023417810121315e-09, 'fit_path': False, 'positive': False, 'jitter': 0.0042295329996313615, 'random_state': 3002925056}
+split_random_state: 1420989184
+Score type: mean_squared_error
+Validation scores: ['0.094042', '0.092495', '0.065750', '0.099868', '0.076827', '0.093623', '0.084675', '0.089737', '0.098033', '0.092578']
+Mean validation score: 0.088763
+Final test score (holdout): 0.099607
+---------------------------------------
+
+--- Model ID: MD9UT3E78H54LM0O ---
+n_features_all: 392
+n_features_selected: 14
+selected_indexes: [218, 307, 56, 266, 63, 67, 77, 336, 105, 376, 59, 73, 257, 42]
+Model type: ARDRegression
+Hyperparameters: {'max_iter': 385, 'tol': 1.7289741171601749e-06, 'alpha_1': 0.003495683359262677, 'alpha_2': 1.3363642791747108e-08, 'lambda_1': 9.744482688031069e-06, 'lambda_2': 3.699433005258996e-08, 'compute_score': False, 'threshold_lambda': 6016.0161546177915, 'fit_intercept': True}
+split_random_state: 2775245568
+Score type: mean_squared_error
+Validation scores: ['0.091927', '0.097652', '0.084163', '0.093135', '0.072154', '0.085192', '0.088764', '0.080288', '0.098447', '0.078711']
+Mean validation score: 0.087043
+Final test score (holdout): 0.109161
+---------------------------------------
+
+--- Model ID: GFDKC23S6A1JO5WA ---
+n_features_all: 392
+n_features_selected: 14
+selected_indexes: [218, 307, 56, 266, 63, 67, 77, 336, 105, 376, 59, 73, 257, 42]
+Model type: BayesianRidge
+Hyperparameters: {'max_iter': 109, 'tol': 0.014437450478248714, 'alpha_1': 3.0025077795347027e-06, 'alpha_2': 1.3302643054214374e-06, 'lambda_1': 1.1325716938004931e-09, 'lambda_2': 4.76225281074956e-08, 'alpha_init': 0.9095990300707749, 'lambda_init': 0.01732912114175224, 'compute_score': True, 'fit_intercept': False}
+split_random_state: 341477120
+Score type: mean_squared_error
+Validation scores: ['0.089537', '0.088780', '0.083041', '0.080368', '0.088925', '0.093081', '0.094246', '0.068891', '0.079761', '0.085253']
+Mean validation score: 0.085188
+Final test score (holdout): 0.117484
+---------------------------------------
+
+--- Model ID: HAAKHIYOZCQNK5SA ---
+n_features_all: 392
+n_features_selected: 14
+selected_indexes: [218, 307, 56, 266, 63, 67, 77, 336, 105, 376, 59, 73, 257, 42]
+Model type: ARDRegression
+Hyperparameters: {'max_iter': 408, 'tol': 0.00806537946243249, 'alpha_1': 2.0404664588807566e-06, 'alpha_2': 4.032937545667598e-10, 'lambda_1': 0.0003927129512361016, 'lambda_2': 0.003343210105279943, 'compute_score': True, 'threshold_lambda': 10290.779178347391, 'fit_intercept': True}
+split_random_state: 1013848832
+Score type: mean_squared_error
+Validation scores: ['0.091313', '0.091996', '0.088997', '0.090506', '0.096484', '0.096018', '0.090131', '0.063923', '0.077812', '0.094552']
+Mean validation score: 0.088173
+Final test score (holdout): 0.102484
+---------------------------------------
+
+--- Model ID: DLO22219Q46D278S ---
+n_features_all: 392
+n_features_selected: 14
+selected_indexes: [218, 307, 56, 266, 63, 67, 77, 336, 105, 376, 59, 73, 257, 42]
+Model type: ARDRegression
+Hyperparameters: {'max_iter': 111, 'tol': 9.018501897725895e-06, 'alpha_1': 6.789906247185214e-09, 'alpha_2': 7.997190255443506e-08, 'lambda_1': 1.072430276878022e-09, 'lambda_2': 5.5925678456466e-08, 'compute_score': False, 'threshold_lambda': 7137.045826431324, 'fit_intercept': False}
+split_random_state: 747060736
+Score type: mean_squared_error
+Validation scores: ['0.095427', '0.087043', '0.088091', '0.071433', '0.074090', '0.081355', '0.083376', '0.089007', '0.090433', '0.089604']
+Mean validation score: 0.084986
+Final test score (holdout): 0.115062
+---------------------------------------
+
+--- Model ID: IRC9HRPFZ1FUDGQI ---
+n_features_all: 392
+n_features_selected: 14
+selected_indexes: [218, 307, 56, 266, 63, 67, 77, 336, 105, 376, 59, 73, 257, 42]
+Model type: ARDRegression
+Hyperparameters: {'max_iter': 338, 'tol': 3.715068933969192e-07, 'alpha_1': 1.1520978114135852e-05, 'alpha_2': 4.610446893998951e-08, 'lambda_1': 2.4770684543101665e-10, 'lambda_2': 0.00015227037940054525, 'compute_score': True, 'threshold_lambda': 10144.5956202507, 'fit_intercept': False}
+split_random_state: 1170212864
+Score type: mean_squared_error
+Validation scores: ['0.093765', '0.090340', '0.096849', '0.085303', '0.080960', '0.090644', '0.098603', '0.074942', '0.085243', '0.095574']
+Mean validation score: 0.089222
+Final test score (holdout): 14.197288
+---------------------------------------
+
+--- Model ID: C7MUNCP2LOM0ET0Q ---
+n_features_all: 392
+n_features_selected: 14
+selected_indexes: [218, 307, 56, 266, 63, 67, 77, 336, 105, 376, 59, 73, 257, 42]
+Model type: ARDRegression
+Hyperparameters: {'max_iter': 167, 'tol': 0.007819516547907173, 'alpha_1': 6.187169129686483e-08, 'alpha_2': 3.322717036462438e-07, 'lambda_1': 1.6066231873813018e-09, 'lambda_2': 1.6667270747175773e-08, 'compute_score': True, 'threshold_lambda': 14065.921557064452, 'fit_intercept': True}
+split_random_state: 3290673920
+Score type: mean_squared_error
+Validation scores: ['0.094592', '0.074586', '0.082000', '0.086699', '0.088968', '0.096578', '0.092233', '0.076798', '0.092582', '0.074199']
+Mean validation score: 0.085923
+Final test score (holdout): 0.111286
+---------------------------------------
+
+--- Model ID: ON600CFNE23W04QR ---
+n_features_all: 392
+n_features_selected: 14
+selected_indexes: [218, 307, 56, 266, 63, 67, 77, 336, 105, 376, 59, 73, 257, 42]
+Model type: ARDRegression
+Hyperparameters: {'max_iter': 375, 'tol': 1.0627263132503413e-05, 'alpha_1': 9.042076608212607e-09, 'alpha_2': 4.864843448878839e-09, 'lambda_1': 0.002403625771727499, 'lambda_2': 2.5432635323881835e-05, 'compute_score': False, 'threshold_lambda': 14958.103998094679, 'fit_intercept': False}
+split_random_state: 1773631232
+Score type: mean_squared_error
+Validation scores: ['0.096834', '0.081172', '0.094673', '0.086130', '0.084667', '0.080148', '0.077607', '0.097754', '0.076849', '0.078934']
+Mean validation score: 0.085477
+Final test score (holdout): 0.114657
+---------------------------------------
+
+--- Model ID: SGCUNHHBHM69B3BJ ---
+n_features_all: 392
+n_features_selected: 14
+selected_indexes: [218, 307, 56, 266, 63, 67, 77, 336, 105, 376, 59, 73, 257, 42]
+Model type: LassoLarsIC
+Hyperparameters: {'criterion': 'aic', 'fit_intercept': True, 'max_iter': 291, 'eps': 1.8353397364625046e-16, 'positive': True, 'noise_variance': 7.650492072254444e-05}
+split_random_state: 2919883008
+Score type: mean_squared_error
+Validation scores: ['0.093391', '0.080346', '0.088474', '0.093605', '0.069894', '0.088633', '0.098611', '0.089844', '0.097345', '0.081210']
+Mean validation score: 0.088135
+Final test score (holdout): 0.102083
+---------------------------------------
+
+--- Model ID: AG241YPE7P4N9C6M ---
+n_features_all: 392
+n_features_selected: 14
+selected_indexes: [218, 307, 56, 266, 63, 67, 77, 336, 105, 376, 59, 73, 257, 42]
+Model type: ARDRegression
+Hyperparameters: {'max_iter': 695, 'tol': 5.777631766392067e-07, 'alpha_1': 5.848071530517726e-08, 'alpha_2': 4.2203926069384415e-10, 'lambda_1': 0.00014197351646244214, 'lambda_2': 2.0960723857920907e-09, 'compute_score': False, 'threshold_lambda': 13563.427556179458, 'fit_intercept': True}
+split_random_state: 2724985856
+Score type: mean_squared_error
+Validation scores: ['0.085299', '0.089963', '0.076640', '0.094025', '0.082545', '0.075732', '0.085607', '0.099909', '0.098425', '0.095758']
+Mean validation score: 0.088390
+Final test score (holdout): 0.105719
+---------------------------------------
+
+--- Model ID: FIJXUPWD21UGVQS6 ---
+n_features_all: 392
+n_features_selected: 14
+selected_indexes: [218, 307, 56, 266, 63, 67, 77, 336, 105, 376, 59, 73, 257, 42]
+Model type: HuberRegressor
+Hyperparameters: {'epsilon': 3.488621142926921, 'max_iter': 30, 'alpha': 0.823194128844823, 'warm_start': False, 'fit_intercept': True, 'tol': 1.1550453631291993e-08}
+split_random_state: 2235568128
+Score type: mean_squared_error
+Validation scores: ['0.096409', '0.082723', '0.094827', '0.091651', '0.077440', '0.078326', '0.087765', '0.088494', '0.081210', '0.096970']
+Mean validation score: 0.087582
+Final test score (holdout): 0.111216
+---------------------------------------
+
+--- Model ID: INBH08NCP0PQ7YKM ---
+n_features_all: 392
+n_features_selected: 14
+selected_indexes: [218, 307, 56, 266, 63, 67, 77, 336, 105, 376, 59, 73, 257, 42]
+Model type: ARDRegression
+Hyperparameters: {'max_iter': 625, 'tol': 8.517607479193178e-06, 'alpha_1': 1.0602923250761666e-08, 'alpha_2': 0.00020113700058299066, 'lambda_1': 1.607989618028497e-09, 'lambda_2': 2.6378723404096093e-06, 'compute_score': True, 'threshold_lambda': 12496.599929506567, 'fit_intercept': False}
+split_random_state: 2789885696
+Score type: mean_squared_error
+Validation scores: ['0.073436', '0.097982', '0.087175', '0.078838', '0.088471', '0.087723', '0.094115', '0.086467', '0.092099', '0.089257']
+Mean validation score: 0.087556
+Final test score (holdout): 13.449545
+---------------------------------------
+
+--- Model ID: 52N52HQVG7MLTBGL ---
+n_features_all: 392
+n_features_selected: 14
+selected_indexes: [218, 307, 56, 266, 63, 67, 77, 336, 105, 376, 59, 73, 257, 42]
+Model type: PassiveAggressiveRegressor
+Hyperparameters: {'C': 0.210738007565596, 'fit_intercept': True, 'max_iter': 222, 'tol': 0.03201721451197238, 'early_stopping': True, 'validation_fraction': 0.08417362122295416, 'n_iter_no_change': 9, 'loss': 'squared_epsilon_insensitive', 'epsilon': 0.11176061068005547, 'warm_start': True, 'average': 23, 'random_state': 2869362688}
+split_random_state: 526820096
+Score type: mean_squared_error
+Validation scores: ['0.093071', '0.078313', '0.088686', '0.083361', '0.085928', '0.096477', '0.084853', '0.093436', '0.084986', '0.087561']
+Mean validation score: 0.087667
+Final test score (holdout): 0.105103
+---------------------------------------
+
+--- Model ID: VUHNEQSK7EO1VVNW ---
+n_features_all: 392
+n_features_selected: 14
+selected_indexes: [218, 307, 56, 266, 63, 67, 77, 336, 105, 376, 59, 73, 257, 42]
+Model type: ARDRegression
+Hyperparameters: {'max_iter': 201, 'tol': 2.2641241208157384e-06, 'alpha_1': 0.000532353099580527, 'alpha_2': 0.000290004536266628, 'lambda_1': 0.00024171380886253094, 'lambda_2': 2.636861151506689e-07, 'compute_score': True, 'threshold_lambda': 10939.883118597094, 'fit_intercept': False}
+split_random_state: 3654101248
+Score type: mean_squared_error
+Validation scores: ['0.098434', '0.086952', '0.067247', '0.084054', '0.090103', '0.090735', '0.097451', '0.079144', '0.091159', '0.094568']
+Mean validation score: 0.087985
+Final test score (holdout): 0.106150
+---------------------------------------
+
+--- Model ID: H8SXPD2DZ14131IR ---
+n_features_all: 392
+n_features_selected: 14
+selected_indexes: [218, 307, 56, 266, 63, 67, 77, 336, 105, 376, 59, 73, 257, 42]
+Model type: BayesianRidge
+Hyperparameters: {'max_iter': 151, 'tol': 1.30900445332372e-05, 'alpha_1': 5.239177903039369e-10, 'alpha_2': 3.6854890938332593e-10, 'lambda_1': 3.4014703395335114e-06, 'lambda_2': 1.5894931483498714e-07, 'alpha_init': 0.29145937996852167, 'lambda_init': 0.6665143406346478, 'compute_score': True, 'fit_intercept': True}
+split_random_state: 2057719040
+Score type: mean_squared_error
+Validation scores: ['0.088350', '0.092390', '0.097465', '0.077178', '0.090638', '0.092339', '0.080557', '0.096219', '0.069459', '0.093558']
+Mean validation score: 0.087815
+Final test score (holdout): 0.104153
+---------------------------------------
+
+--- Model ID: GX260CYSAGCGRIJE ---
+n_features_all: 392
+n_features_selected: 14
+selected_indexes: [218, 307, 56, 266, 63, 67, 77, 336, 105, 376, 59, 73, 257, 42]
+Model type: HuberRegressor
+Hyperparameters: {'epsilon': 7.155009489540673, 'max_iter': 141, 'alpha': 0.01641702340550694, 'warm_start': True, 'fit_intercept': True, 'tol': 4.542010496181552e-06}
+split_random_state: 501552640
+Score type: mean_squared_error
+Validation scores: ['0.087003', '0.077716', '0.092445', '0.085446', '0.084492', '0.086516', '0.087906', '0.098217', '0.081519', '0.090822']
+Mean validation score: 0.087208
+Final test score (holdout): 0.108596
+---------------------------------------
+
+--- Model ID: ZIHQMFA97AIIH7AX ---
+n_features_all: 392
+n_features_selected: 14
+selected_indexes: [218, 307, 56, 266, 63, 67, 77, 336, 105, 376, 59, 73, 257, 42]
+Model type: LassoLarsIC
+Hyperparameters: {'criterion': 'aic', 'fit_intercept': True, 'max_iter': 654, 'eps': 1.875816622410816e-15, 'positive': True, 'noise_variance': 0.045660962519423656}
+split_random_state: 161039616
+Score type: mean_squared_error
+Validation scores: ['0.098699', '0.092866', '0.099423', '0.085584', '0.096314', '0.077512', '0.098591', '0.075836', '0.067210', '0.078495']
+Mean validation score: 0.087053
+Final test score (holdout): 0.108712
+---------------------------------------
+
+--- Model ID: 8VP1ASX7EK1N986I ---
+n_features_all: 392
+n_features_selected: 14
+selected_indexes: [218, 307, 56, 266, 63, 67, 77, 336, 105, 376, 59, 73, 257, 42]
+Model type: Ridge
+Hyperparameters: {'alpha': 0.0018448432460943592, 'fit_intercept': True, 'max_iter': 772, 'tol': 0.0006359528176006084, 'solver': 'cholesky', 'positive': False, 'random_state': 3396679680}
+split_random_state: 2874472704
+Score type: mean_squared_error
+Validation scores: ['0.082860', '0.080900', '0.083095', '0.078763', '0.087944', '0.099844', '0.091553', '0.097958', '0.079904', '0.097433']
+Mean validation score: 0.088025
+Final test score (holdout): 0.103726
+---------------------------------------
+
+--- Model ID: VA8VLF0V0D6U19IS ---
+n_features_all: 392
+n_features_selected: 14
+selected_indexes: [218, 307, 56, 266, 63, 67, 77, 336, 105, 376, 59, 73, 257, 42]
+Model type: BayesianRidge
+Hyperparameters: {'max_iter': 252, 'tol': 0.006810251415865429, 'alpha_1': 0.0032997564959181933, 'alpha_2': 1.8247817182744737e-09, 'lambda_1': 2.986678227991899e-08, 'lambda_2': 3.636235459681394e-08, 'alpha_init': 0.3196895129567846, 'lambda_init': 0.9356198715720893, 'compute_score': False, 'fit_intercept': True}
+split_random_state: 1250028544
+Score type: mean_squared_error
+Validation scores: ['0.073989', '0.097777', '0.085124', '0.090644', '0.097120', '0.096030', '0.077676', '0.092047', '0.070635', '0.088875']
+Mean validation score: 0.086992
+Final test score (holdout): 0.106553
+---------------------------------------
+
+--- Model ID: JBBJ8YFPZDUBZPXT ---
+n_features_all: 392
+n_features_selected: 14
+selected_indexes: [218, 307, 56, 266, 63, 67, 77, 336, 105, 376, 59, 73, 257, 42]
+Model type: BayesianRidge
+Hyperparameters: {'max_iter': 485, 'tol': 0.0010784713018799797, 'alpha_1': 7.882667939239928e-10, 'alpha_2': 0.00884555067429389, 'lambda_1': 1.2126128049656099e-08, 'lambda_2': 2.1376406916533493e-10, 'alpha_init': 0.7676440392707039, 'lambda_init': 0.05577220830791673, 'compute_score': True, 'fit_intercept': True}
+split_random_state: 854092800
+Score type: mean_squared_error
+Validation scores: ['0.082753', '0.079414', '0.091874', '0.092503', '0.085532', '0.093129', '0.089403', '0.076613', '0.091946', '0.088044']
+Mean validation score: 0.087121
+Final test score (holdout): 0.105969
+---------------------------------------
+
+--- Model ID: W2H6GIEGNB08G2SH ---
+n_features_all: 392
+n_features_selected: 14
+selected_indexes: [218, 307, 56, 266, 63, 67, 77, 336, 105, 376, 59, 73, 257, 42]
+Model type: ARDRegression
+Hyperparameters: {'max_iter': 222, 'tol': 0.001959206913994935, 'alpha_1': 5.823563601203126e-09, 'alpha_2': 5.905843118951205e-10, 'lambda_1': 0.006657986807869829, 'lambda_2': 2.494364862704105e-05, 'compute_score': True, 'threshold_lambda': 10651.457276663827, 'fit_intercept': False}
+split_random_state: 28244480
+Score type: mean_squared_error
+Validation scores: ['0.096344', '0.073833', '0.095455', '0.069013', '0.091553', '0.080457', '0.090895', '0.095939', '0.088811', '0.079616']
+Mean validation score: 0.086192
+Final test score (holdout): 14.174358
+---------------------------------------
+
+--- Model ID: ZF4AFGN1XOBDGF35 ---
+n_features_all: 392
+n_features_selected: 14
+selected_indexes: [218, 307, 56, 266, 63, 67, 77, 336, 105, 376, 59, 73, 257, 42]
+Model type: LassoLarsIC
+Hyperparameters: {'criterion': 'aic', 'fit_intercept': True, 'max_iter': 844, 'eps': 1.247460158031555e-16, 'positive': False, 'noise_variance': 0.00011341400718614988}
+split_random_state: 1466628096
+Score type: mean_squared_error
+Validation scores: ['0.093497', '0.086726', '0.090101', '0.099034', '0.088573', '0.094382', '0.097866', '0.092912', '0.088838', '0.074643']
+Mean validation score: 0.090657
+Final test score (holdout): 0.098853
+---------------------------------------
+
+--- Model ID: CCPYBPF9FLEXUS50 ---
+n_features_all: 392
+n_features_selected: 14
+selected_indexes: [218, 307, 56, 266, 63, 67, 77, 336, 105, 376, 59, 73, 257, 42]
+Model type: LassoLarsIC
+Hyperparameters: {'criterion': 'bic', 'fit_intercept': True, 'max_iter': 700, 'eps': 1.2201459962756597e-14, 'positive': True, 'noise_variance': 0.0065515541377444315}
+split_random_state: 2321814528
+Score type: mean_squared_error
+Validation scores: ['0.095915', '0.086120', '0.074648', '0.076761', '0.092782', '0.096403', '0.090173', '0.097334', '0.083559', '0.089568']
+Mean validation score: 0.088326
+Final test score (holdout): 0.101418
+---------------------------------------
+
+--- Model ID: NE0OKBY2FBTVH7EM ---
+n_features_all: 392
+n_features_selected: 14
+selected_indexes: [218, 307, 56, 266, 63, 67, 77, 336, 105, 376, 59, 73, 257, 42]
+Model type: BayesianRidge
+Hyperparameters: {'max_iter': 684, 'tol': 0.00024308526359777776, 'alpha_1': 0.000652570492220178, 'alpha_2': 0.000944389147974896, 'lambda_1': 0.005442040321718625, 'lambda_2': 1.7035255538159557e-10, 'alpha_init': 0.792899178877395, 'lambda_init': 0.41091805859435576, 'compute_score': False, 'fit_intercept': False}
+split_random_state: 3725769216
+Score type: mean_squared_error
+Validation scores: ['0.099814', '0.097675', '0.071069', '0.092630', '0.088303', '0.087256', '0.094657', '0.069355', '0.086153', '0.088569']
+Mean validation score: 0.087548
+Final test score (holdout): 13.869070
+---------------------------------------
+
+--- Model ID: 3WEAOLWM1ULMC3DW ---
+n_features_all: 392
+n_features_selected: 14
+selected_indexes: [218, 307, 56, 266, 63, 67, 77, 336, 105, 376, 59, 73, 257, 42]
+Model type: LinearRegression
+Hyperparameters: {'fit_intercept': True, 'tol': 0.0008509028633209702, 'positive': False}
+split_random_state: 1607457024
+Score type: mean_squared_error
+Validation scores: ['0.089450', '0.081656', '0.094913', '0.084660', '0.096436', '0.099901', '0.086336', '0.099234', '0.091655', '0.096242']
+Mean validation score: 0.092048
+Final test score (holdout): 0.093958
+---------------------------------------
+
+--- Model ID: TS895HJTLCL4UYAO ---
+n_features_all: 392
+n_features_selected: 14
+selected_indexes: [218, 307, 56, 266, 63, 67, 77, 336, 105, 376, 59, 73, 257, 42]
+Model type: LassoLarsIC
+Hyperparameters: {'criterion': 'bic', 'fit_intercept': True, 'max_iter': 800, 'eps': 1.721957175927503e-11, 'positive': False, 'noise_variance': 0.0004356822003378366}
+split_random_state: 119444992
+Score type: mean_squared_error
+Validation scores: ['0.074662', '0.098173', '0.090462', '0.088999', '0.088202', '0.099564', '0.094426', '0.085631', '0.077995', '0.084615']
+Mean validation score: 0.088273
+Final test score (holdout): 0.104152
+---------------------------------------
+
+--- Model ID: NJMYSYBCZY8RTI9F ---
+n_features_all: 392
+n_features_selected: 14
+selected_indexes: [218, 307, 56, 266, 63, 67, 77, 336, 105, 376, 59, 73, 257, 42]
+Model type: LinearRegression
+Hyperparameters: {'fit_intercept': False, 'tol': 1.1488280495496652e-06, 'positive': False}
+split_random_state: 2206447360
+Score type: mean_squared_error
+Validation scores: ['0.095733', '0.081300', '0.072536', '0.094059', '0.092184', '0.087908', '0.088980', '0.093472', '0.085625', '0.097670']
+Mean validation score: 0.088947
+Final test score (holdout): 0.108908
+---------------------------------------
+
+--- Model ID: 0D01HUW59FWH3RFJ ---
+n_features_all: 392
+n_features_selected: 14
+selected_indexes: [218, 307, 56, 266, 63, 67, 77, 336, 105, 376, 59, 73, 257, 42]
+Model type: ARDRegression
+Hyperparameters: {'max_iter': 365, 'tol': 1.4970106520158415e-07, 'alpha_1': 8.516833796513825e-10, 'alpha_2': 1.6328340229603075e-09, 'lambda_1': 9.811262702272203e-10, 'lambda_2': 1.0262390748052173e-05, 'compute_score': True, 'threshold_lambda': 6087.746125372889, 'fit_intercept': False}
+split_random_state: 3697405440
+Score type: mean_squared_error
+Validation scores: ['0.082250', '0.076790', '0.085462', '0.094615', '0.099386', '0.098390', '0.085065', '0.087808', '0.096194', '0.088621']
+Mean validation score: 0.089458
+Final test score (holdout): 13.488948
+---------------------------------------
+
+--- Model ID: F91PFKJSP2BUUJ5O ---
+n_features_all: 392
+n_features_selected: 14
+selected_indexes: [218, 307, 56, 266, 63, 67, 77, 336, 105, 376, 59, 73, 257, 42]
+Model type: LinearRegression
+Hyperparameters: {'fit_intercept': False, 'tol': 1.9626610999858256e-07, 'positive': False}
+split_random_state: 4092860416
+Score type: mean_squared_error
+Validation scores: ['0.088468', '0.077635', '0.088567', '0.066126', '0.099025', '0.099618', '0.079201', '0.096941', '0.095282', '0.091295']
+Mean validation score: 0.088216
+Final test score (holdout): 0.102047
+---------------------------------------
+
+--- Model ID: 8A3T3K8MNS71O0KD ---
+n_features_all: 392
+n_features_selected: 14
+selected_indexes: [218, 307, 56, 266, 63, 67, 77, 336, 105, 376, 59, 73, 257, 42]
+Model type: LassoLarsIC
+Hyperparameters: {'criterion': 'aic', 'fit_intercept': True, 'max_iter': 1350, 'eps': 3.638974641210563e-14, 'positive': False, 'noise_variance': 1.1466835734727789e-05}
+split_random_state: 3370254592
+Score type: mean_squared_error
+Validation scores: ['0.096677', '0.095959', '0.092326', '0.071967', '0.077092', '0.081518', '0.097826', '0.084395', '0.088671', '0.073086']
+Mean validation score: 0.085952
+Final test score (holdout): 0.109923
+---------------------------------------
+
+--- Model ID: UR0Y30CDZDK5CD17 ---
+n_features_all: 392
+n_features_selected: 14
+selected_indexes: [218, 307, 56, 266, 63, 67, 77, 336, 105, 376, 59, 73, 257, 42]
+Model type: HuberRegressor
+Hyperparameters: {'epsilon': 9.246850223963058, 'max_iter': 190, 'alpha': 1.168522413928513e-06, 'warm_start': True, 'fit_intercept': True, 'tol': 2.947102669172544e-08}
+split_random_state: 1083507200
+Score type: mean_squared_error
+Validation scores: ['0.084076', '0.076249', '0.079837', '0.095357', '0.092923', '0.086415', '0.099334', '0.076774', '0.097712', '0.074291']
+Mean validation score: 0.086297
+Final test score (holdout): 0.113988
+---------------------------------------
+
+--- Model ID: PAKTTJ3ZL1KNS12Z ---
+n_features_all: 392
+n_features_selected: 14
+selected_indexes: [218, 307, 56, 266, 63, 67, 77, 336, 105, 376, 59, 73, 257, 42]
+Model type: Ridge
+Hyperparameters: {'alpha': 1.7211608866177037, 'fit_intercept': True, 'max_iter': 8598, 'tol': 1.2848815985791366e-05, 'solver': 'saga', 'positive': False, 'random_state': 842510336}
+split_random_state: 3204645632
+Score type: mean_squared_error
+Validation scores: ['0.085745', '0.071920', '0.095564', '0.090345', '0.080007', '0.098531', '0.090973', '0.078733', '0.082896', '0.098160']
+Mean validation score: 0.087287
+Final test score (holdout): 0.106614
+---------------------------------------
+
+--- Model ID: DVYCQ140XTNWQOAD ---
+n_features_all: 392
+n_features_selected: 14
+selected_indexes: [218, 307, 56, 266, 63, 67, 77, 336, 105, 376, 59, 73, 257, 42]
+Model type: ARDRegression
+Hyperparameters: {'max_iter': 251, 'tol': 4.970521068583505e-07, 'alpha_1': 5.790033123873127e-10, 'alpha_2': 0.005048038983922488, 'lambda_1': 1.7869043126408668e-05, 'lambda_2': 1.4160944603407653e-10, 'compute_score': True, 'threshold_lambda': 5068.34908819354, 'fit_intercept': True}
+split_random_state: 3798988800
+Score type: mean_squared_error
+Validation scores: ['0.092696', '0.080495', '0.099155', '0.085335', '0.082143', '0.092708', '0.098095', '0.074004', '0.089564', '0.090461']
+Mean validation score: 0.088465
+Final test score (holdout): 0.104945
+---------------------------------------
+
+--- Model ID: M98GYRBECJVB287R ---
+n_features_all: 392
+n_features_selected: 14
+selected_indexes: [218, 307, 56, 266, 63, 67, 77, 336, 105, 376, 59, 73, 257, 42]
+Model type: LassoLars
+Hyperparameters: {'alpha': 0.017312971629824137, 'fit_intercept': True, 'max_iter': 183, 'eps': 4.735345268774327e-09, 'fit_path': False, 'positive': True, 'jitter': 9.106311412055869e-08, 'random_state': 3730112512}
+split_random_state: 4045795072
+Score type: mean_squared_error
+Validation scores: ['0.098049', '0.099989', '0.093811', '0.088434', '0.099870', '0.072490', '0.072368', '0.089854', '0.075151', '0.083492']
+Mean validation score: 0.087351
+Final test score (holdout): 0.104678
+---------------------------------------
+
+--- Model ID: QK7HBTZ6A0ZWXY9I ---
+n_features_all: 392
+n_features_selected: 14
+selected_indexes: [218, 307, 56, 266, 63, 67, 77, 336, 105, 376, 59, 73, 257, 42]
+Model type: ARDRegression
+Hyperparameters: {'max_iter': 395, 'tol': 6.068364747858231e-07, 'alpha_1': 2.591716971628476e-07, 'alpha_2': 3.0704614520080457e-09, 'lambda_1': 8.865818229924357e-08, 'lambda_2': 0.0002477826908067872, 'compute_score': False, 'threshold_lambda': 9774.973892935292, 'fit_intercept': True}
+split_random_state: 1585176064
+Score type: mean_squared_error
+Validation scores: ['0.089688', '0.092407', '0.078277', '0.095384', '0.092345', '0.095135', '0.089708', '0.080813', '0.094454', '0.088282']
+Mean validation score: 0.089649
+Final test score (holdout): 0.100721
+---------------------------------------
+
+--- Model ID: 74Y7FPJ4NKYTE6RC ---
+n_features_all: 392
+n_features_selected: 14
+selected_indexes: [218, 307, 56, 266, 63, 67, 77, 336, 105, 376, 59, 73, 257, 42]
+Model type: HuberRegressor
+Hyperparameters: {'epsilon': 3.0885552010219364, 'max_iter': 126, 'alpha': 0.23719018121496274, 'warm_start': False, 'fit_intercept': True, 'tol': 1.2407138511013096e-06}
+split_random_state: 3593451776
+Score type: mean_squared_error
+Validation scores: ['0.083978', '0.084014', '0.088163', '0.092173', '0.096791', '0.086206', '0.097148', '0.092279', '0.087615', '0.087075']
+Mean validation score: 0.089544
+Final test score (holdout): 0.094833
+---------------------------------------
+
+--- Model ID: Z4O5GGPML4VDX6E4 ---
+n_features_all: 392
+n_features_selected: 14
+selected_indexes: [218, 307, 56, 266, 63, 67, 77, 336, 105, 376, 59, 73, 257, 42]
+Model type: HuberRegressor
+Hyperparameters: {'epsilon': 1.9105338079976397, 'max_iter': 154, 'alpha': 0.8888540372121411, 'warm_start': False, 'fit_intercept': True, 'tol': 0.007780347867436729}
+split_random_state: 2689112832
+Score type: mean_squared_error
+Validation scores: ['0.090590', '0.096520', '0.099123', '0.071274', '0.088455', '0.078938', '0.098427', '0.099909', '0.092028', '0.086894']
+Mean validation score: 0.090216
+Final test score (holdout): 0.096864
+---------------------------------------
+
+--- Model ID: NZCLPM9XIMKZ7KWW ---
+n_features_all: 392
+n_features_selected: 14
+selected_indexes: [218, 307, 56, 266, 63, 67, 77, 336, 105, 376, 59, 73, 257, 42]
+Model type: Ridge
+Hyperparameters: {'alpha': 3.2548907637983095, 'fit_intercept': True, 'max_iter': 4815, 'tol': 0.0001518062290649632, 'solver': 'saga', 'positive': False, 'random_state': 945037312}
+split_random_state: 1436747264
+Score type: mean_squared_error
+Validation scores: ['0.076961', '0.092381', '0.074391', '0.094305', '0.086374', '0.084570', '0.090303', '0.098366', '0.079322', '0.098905']
+Mean validation score: 0.087588
+Final test score (holdout): 0.109080
+---------------------------------------
+
+--- Model ID: 6T045YNH6XDO9R6I ---
+n_features_all: 392
+n_features_selected: 14
+selected_indexes: [218, 307, 56, 266, 63, 67, 77, 336, 105, 376, 59, 73, 257, 42]
+Model type: HuberRegressor
+Hyperparameters: {'epsilon': 5.988311803923468, 'max_iter': 118, 'alpha': 4.7365375034809174e-08, 'warm_start': False, 'fit_intercept': True, 'tol': 2.965583345027811e-05}
+split_random_state: 2374167296
+Score type: mean_squared_error
+Validation scores: ['0.094363', '0.097401', '0.073245', '0.074733', '0.096581', '0.094635', '0.089933', '0.087991', '0.081939', '0.098463']
+Mean validation score: 0.088928
+Final test score (holdout): 0.098064
+---------------------------------------
+
+--- Model ID: U36542R30NTCB965 ---
+n_features_all: 392
+n_features_selected: 14
+selected_indexes: [218, 307, 56, 266, 63, 67, 77, 336, 105, 376, 59, 73, 257, 42]
+Model type: Ridge
+Hyperparameters: {'alpha': 0.021852969964784103, 'fit_intercept': True, 'max_iter': 8641, 'tol': 2.4256333926627e-06, 'solver': 'lsqr', 'positive': False, 'random_state': 625758208}
+split_random_state: 3472032512
+Score type: mean_squared_error
+Validation scores: ['0.085001', '0.075881', '0.093078', '0.094322', '0.082943', '0.074193', '0.095005', '0.097275', '0.090162', '0.090775']
+Mean validation score: 0.087864
+Final test score (holdout): 0.102567
+---------------------------------------
+
+--- Model ID: RT2GVEG0EWGONEDY ---
+n_features_all: 392
+n_features_selected: 14
+selected_indexes: [218, 307, 56, 266, 63, 67, 77, 336, 105, 376, 59, 73, 257, 42]
+Model type: Lasso
+Hyperparameters: {'alpha': 0.012523402793324527, 'fit_intercept': True, 'max_iter': 1948, 'tol': 2.6789317850395256e-05, 'warm_start': True, 'positive': True, 'selection': 'cyclic', 'random_state': 3221225472}
+split_random_state: 1182739200
+Score type: mean_squared_error
+Validation scores: ['0.069591', '0.080212', '0.092149', '0.096093', '0.076958', '0.099473', '0.097865', '0.082509', '0.091615', '0.084499']
+Mean validation score: 0.087096
+Final test score (holdout): 0.105864
+---------------------------------------
+
+--- Model ID: I795PYOB6LDUZH25 ---
+n_features_all: 392
+n_features_selected: 14
+selected_indexes: [218, 307, 56, 266, 63, 67, 77, 336, 105, 376, 59, 73, 257, 42]
+Model type: BayesianRidge
+Hyperparameters: {'max_iter': 651, 'tol': 0.004128346938954961, 'alpha_1': 5.143650025876269e-10, 'alpha_2': 0.003328658815538525, 'lambda_1': 2.8284481708506854e-07, 'lambda_2': 0.00111761189192099, 'alpha_init': 0.17310845127128033, 'lambda_init': 0.032166263260759435, 'compute_score': False, 'fit_intercept': True}
+split_random_state: 52544000
+Score type: mean_squared_error
+Validation scores: ['0.089336', '0.094225', '0.077028', '0.095561', '0.096408', '0.077785', '0.084203', '0.075496', '0.097102', '0.084551']
+Mean validation score: 0.087169
+Final test score (holdout): 0.111225
+---------------------------------------
+
+--- Model ID: 7C84C6WYSMO3ZY3C ---
+n_features_all: 392
+n_features_selected: 14
+selected_indexes: [218, 307, 56, 266, 63, 67, 77, 336, 105, 376, 59, 73, 257, 42]
+Model type: HuberRegressor
+Hyperparameters: {'epsilon': 2.7655066083560333, 'max_iter': 113, 'alpha': 1.569954961424942e-08, 'warm_start': False, 'fit_intercept': True, 'tol': 0.0036416011434351613}
+split_random_state: 3481840384
+Score type: mean_squared_error
+Validation scores: ['0.089726', '0.082645', '0.090736', '0.085567', '0.090494', '0.099929', '0.086715', '0.085213', '0.080372', '0.090982']
+Mean validation score: 0.088238
+Final test score (holdout): 0.102633
+---------------------------------------
+
+--- Model ID: LYDBL0KXZIC7KUXA ---
+n_features_all: 392
+n_features_selected: 14
+selected_indexes: [218, 307, 56, 266, 63, 67, 77, 336, 105, 376, 59, 73, 257, 42]
+Model type: LassoLarsIC
+Hyperparameters: {'criterion': 'bic', 'fit_intercept': True, 'max_iter': 1125, 'eps': 3.8528071162025185e-11, 'positive': True, 'noise_variance': 2.328721995262005e-05}
+split_random_state: 483530752
+Score type: mean_squared_error
+Validation scores: ['0.081266', '0.091127', '0.095969', '0.069687', '0.095214', '0.088133', '0.081895', '0.099922', '0.098559', '0.095311']
+Mean validation score: 0.089708
+Final test score (holdout): 0.095084
+---------------------------------------
+
+--- Model ID: AGJC6WMPJD8CSHO9 ---
+n_features_all: 392
+n_features_selected: 14
+selected_indexes: [218, 307, 56, 266, 63, 67, 77, 336, 105, 376, 59, 73, 257, 42]
+Model type: LinearRegression
+Hyperparameters: {'fit_intercept': True, 'tol': 3.8892295214523294e-07, 'positive': True}
+split_random_state: 1917634816
+Score type: mean_squared_error
+Validation scores: ['0.098967', '0.096329', '0.099724', '0.097390', '0.073086', '0.093589', '0.093168', '0.093290', '0.098480', '0.092009']
+Mean validation score: 0.093603
+Final test score (holdout): 0.080993
+---------------------------------------
+
+--- Model ID: DCYMOGTR50JSNK9U ---
+n_features_all: 392
+n_features_selected: 14
+selected_indexes: [218, 307, 56, 266, 63, 67, 77, 336, 105, 376, 59, 73, 257, 42]
+Model type: Ridge
+Hyperparameters: {'alpha': 0.008074663821889266, 'fit_intercept': True, 'max_iter': 18169, 'tol': 6.850998665714226e-06, 'solver': 'auto', 'positive': True, 'random_state': 484769792}
+split_random_state: 1694696704
+Score type: mean_squared_error
+Validation scores: ['0.088234', '0.094940', '0.069767', '0.082033', '0.098901', '0.097978', '0.095909', '0.094982', '0.099781', '0.098115']
+Mean validation score: 0.092064
+Final test score (holdout): 0.089897
+---------------------------------------
+
+--- Model ID: RW6RUPRANRR5WP7R ---
+n_features_all: 392
+n_features_selected: 14
+selected_indexes: [218, 307, 56, 266, 63, 67, 77, 336, 105, 376, 59, 73, 257, 42]
+Model type: LassoLarsIC
+Hyperparameters: {'criterion': 'bic', 'fit_intercept': True, 'max_iter': 498, 'eps': 5.6190941206455766e-11, 'positive': True, 'noise_variance': 0.00018158286427800844}
+split_random_state: 2116037376
+Score type: mean_squared_error
+Validation scores: ['0.084214', '0.090668', '0.081193', '0.092252', '0.072527', '0.084916', '0.094953', '0.092189', '0.090116', '0.096480']
+Mean validation score: 0.087951
+Final test score (holdout): 0.103813
+---------------------------------------
+
+--- Model ID: 2MAM74L2HYMUAQXF ---
+n_features_all: 392
+n_features_selected: 14
+selected_indexes: [218, 307, 56, 266, 63, 67, 77, 336, 105, 376, 59, 73, 257, 42]
+Model type: ARDRegression
+Hyperparameters: {'max_iter': 405, 'tol': 0.0007614475279387582, 'alpha_1': 1.694326211350429e-07, 'alpha_2': 1.471626633684887e-07, 'lambda_1': 5.277861595747471e-05, 'lambda_2': 2.450504393457492e-07, 'compute_score': True, 'threshold_lambda': 14741.8287032733, 'fit_intercept': True}
+split_random_state: 3771115520
+Score type: mean_squared_error
+Validation scores: ['0.074237', '0.091544', '0.094730', '0.076088', '0.080220', '0.089083', '0.087531', '0.096846', '0.088941', '0.097768']
+Mean validation score: 0.087699
+Final test score (holdout): 0.110752
+---------------------------------------
+
+--- Model ID: Q0QLBZAGACRGWK1D ---
+n_features_all: 392
+n_features_selected: 14
+selected_indexes: [218, 307, 56, 266, 63, 67, 77, 336, 105, 376, 59, 73, 257, 42]
+Model type: ARDRegression
+Hyperparameters: {'max_iter': 327, 'tol': 3.3024290211536772e-06, 'alpha_1': 5.291474918371104e-06, 'alpha_2': 5.527020253033521e-06, 'lambda_1': 1.2238444128183573e-05, 'lambda_2': 6.205261008609972e-05, 'compute_score': True, 'threshold_lambda': 6782.489784437054, 'fit_intercept': False}
+split_random_state: 1695358208
+Score type: mean_squared_error
+Validation scores: ['0.089054', '0.060343', '0.087888', '0.082336', '0.089167', '0.093463', '0.094102', '0.097912', '0.096706', '0.072470']
+Mean validation score: 0.086344
+Final test score (holdout): 13.609537
+---------------------------------------
+
+--- Model ID: QXX7KXKP78MLWYP5 ---
+n_features_all: 392
+n_features_selected: 14
+selected_indexes: [218, 307, 56, 266, 63, 67, 77, 336, 105, 376, 59, 73, 257, 42]
+Model type: HuberRegressor
+Hyperparameters: {'epsilon': 9.003902946884569, 'max_iter': 142, 'alpha': 0.2585208394895136, 'warm_start': True, 'fit_intercept': True, 'tol': 0.003192801688932816}
+split_random_state: 1105228032
+Score type: mean_squared_error
+Validation scores: ['0.093502', '0.098662', '0.065406', '0.089459', '0.086066', '0.095191', '0.093384', '0.093874', '0.059933', '0.098423']
+Mean validation score: 0.087390
+Final test score (holdout): 0.105850
+---------------------------------------
+
+--- Model ID: 4C3CAY8OAO3MZSQX ---
+n_features_all: 392
+n_features_selected: 14
+selected_indexes: [218, 307, 56, 266, 63, 67, 77, 336, 105, 376, 59, 73, 257, 42]
+Model type: LinearRegression
+Hyperparameters: {'fit_intercept': False, 'tol': 0.00011573326307290402, 'positive': False}
+split_random_state: 1560837632
+Score type: mean_squared_error
+Validation scores: ['0.095111', '0.094139', '0.093027', '0.081402', '0.089899', '0.070394', '0.086423', '0.097556', '0.083283', '0.081898']
+Mean validation score: 0.087313
+Final test score (holdout): 0.107600
+---------------------------------------
+
+--- Model ID: OFQQUR727F8LLX31 ---
+n_features_all: 392
+n_features_selected: 14
+selected_indexes: [218, 307, 56, 266, 63, 67, 77, 336, 105, 376, 59, 73, 257, 42]
+Model type: ARDRegression
+Hyperparameters: {'max_iter': 410, 'tol': 0.007138892771037213, 'alpha_1': 0.0006604804444016898, 'alpha_2': 1.3240007832309623e-06, 'lambda_1': 4.583928446750223e-08, 'lambda_2': 5.654497498821007e-09, 'compute_score': True, 'threshold_lambda': 14743.237648857146, 'fit_intercept': True}
+split_random_state: 3181330688
+Score type: mean_squared_error
+Validation scores: ['0.084683', '0.080188', '0.094276', '0.089131', '0.081044', '0.089143', '0.096434', '0.069095', '0.079172', '0.076561']
+Mean validation score: 0.083973
+Final test score (holdout): 0.122443
+---------------------------------------
+
+--- Model ID: U8TYLTRZTMJRKOSO ---
+n_features_all: 392
+n_features_selected: 14
+selected_indexes: [218, 307, 56, 266, 63, 67, 77, 336, 105, 376, 59, 73, 257, 42]
+Model type: BayesianRidge
+Hyperparameters: {'max_iter': 455, 'tol': 0.022142072602693227, 'alpha_1': 0.003254897508875226, 'alpha_2': 8.092719929110492e-06, 'lambda_1': 0.0072819038630553895, 'lambda_2': 8.561652438090417e-09, 'alpha_init': 0.5814094443024168, 'lambda_init': 0.7146208599853487, 'compute_score': True, 'fit_intercept': True}
+split_random_state: 134204928
+Score type: mean_squared_error
+Validation scores: ['0.096830', '0.089599', '0.097092', '0.093189', '0.092437', '0.083398', '0.084436', '0.089400', '0.087329', '0.079129']
+Mean validation score: 0.089284
+Final test score (holdout): 0.100941
+---------------------------------------
+
+--- Model ID: YA9OWKGEIJZK5483 ---
+n_features_all: 392
+n_features_selected: 14
+selected_indexes: [218, 307, 56, 266, 63, 67, 77, 336, 105, 376, 59, 73, 257, 42]
+Model type: LinearRegression
+Hyperparameters: {'fit_intercept': True, 'tol': 0.00021002788995231434, 'positive': True}
+split_random_state: 277116416
+Score type: mean_squared_error
+Validation scores: ['0.087235', '0.093452', '0.098139', '0.095333', '0.094465', '0.071972', '0.091635', '0.093966', '0.080124', '0.095144']
+Mean validation score: 0.090146
+Final test score (holdout): 0.093326
+---------------------------------------
+
+--- Model ID: F175UGLKCXWU0AOR ---
+n_features_all: 392
+n_features_selected: 14
+selected_indexes: [218, 307, 56, 266, 63, 67, 77, 336, 105, 376, 59, 73, 257, 42]
+Model type: HuberRegressor
+Hyperparameters: {'epsilon': 1.1738226743051416, 'max_iter': 160, 'alpha': 7.650263180751495e-06, 'warm_start': False, 'fit_intercept': True, 'tol': 3.0898150052082695e-06}
+split_random_state: 1854211328
+Score type: mean_squared_error
+Validation scores: ['0.083654', '0.080589', '0.096500', '0.056589', '0.086473', '0.087013', '0.084117', '0.091668', '0.097798', '0.074696']
+Mean validation score: 0.083910
+Final test score (holdout): 0.115434
+---------------------------------------
+
+--- Model ID: 3B0R1YTR4GSK37DP ---
+n_features_all: 392
+n_features_selected: 14
+selected_indexes: [218, 307, 56, 266, 63, 67, 77, 336, 105, 376, 59, 73, 257, 42]
+Model type: LassoLars
+Hyperparameters: {'alpha': 0.01817609959587443, 'fit_intercept': True, 'max_iter': 556, 'eps': 3.4630607768540573e-06, 'fit_path': False, 'positive': False, 'jitter': 0.0003938430074037578, 'random_state': 3652763648}
+split_random_state: 3029400064
+Score type: mean_squared_error
+Validation scores: ['0.087547', '0.089782', '0.094424', '0.092946', '0.094309', '0.077823', '0.090383', '0.057006', '0.087460', '0.082737']
+Mean validation score: 0.085442
+Final test score (holdout): 0.115240
+---------------------------------------
+
+--- Model ID: 071Y7M7VLIGC9KS7 ---
+n_features_all: 392
+n_features_selected: 14
+selected_indexes: [218, 307, 56, 266, 63, 67, 77, 336, 105, 376, 59, 73, 257, 42]
+Model type: BayesianRidge
+Hyperparameters: {'max_iter': 130, 'tol': 0.00021522496465129742, 'alpha_1': 8.757854455528303e-08, 'alpha_2': 3.037656526574491e-08, 'lambda_1': 3.7394492373635973e-06, 'lambda_2': 1.9966058891824956e-09, 'alpha_init': 0.6934563123931047, 'lambda_init': 0.9788394654159882, 'compute_score': True, 'fit_intercept': True}
+split_random_state: 4189685760
+Score type: mean_squared_error
+Validation scores: ['0.080791', '0.073996', '0.079036', '0.068664', '0.088037', '0.084035', '0.094528', '0.094770', '0.094222', '0.092222']
+Mean validation score: 0.085030
+Final test score (holdout): 0.114050
+---------------------------------------
+
+--- Model ID: I09N4P7UIFW8EVNJ ---
+n_features_all: 392
+n_features_selected: 14
+selected_indexes: [218, 307, 56, 266, 63, 67, 77, 336, 105, 376, 59, 73, 257, 42]
+Model type: Lasso
+Hyperparameters: {'alpha': 3.3372587840666245e-05, 'fit_intercept': True, 'max_iter': 706, 'tol': 6.298179006064153e-08, 'warm_start': False, 'positive': True, 'selection': 'cyclic', 'random_state': 1669238784}
+split_random_state: 3874797312
+Score type: mean_squared_error
+Validation scores: ['0.083207', '0.085683', '0.084939', '0.088374', '0.097662', '0.087845', '0.076811', '0.080038', '0.091740', '0.088566']
+Mean validation score: 0.086487
+Final test score (holdout): 0.109509
+---------------------------------------
+
+--- Model ID: FMPP3CEPT2BTTZUX ---
+n_features_all: 392
+n_features_selected: 14
+selected_indexes: [218, 307, 56, 266, 63, 67, 77, 336, 105, 376, 59, 73, 257, 42]
+Model type: LinearRegression
+Hyperparameters: {'fit_intercept': True, 'tol': 8.624104533754056e-05, 'positive': True}
+split_random_state: 687085312
+Score type: mean_squared_error
+Validation scores: ['0.080952', '0.099949', '0.093277', '0.079502', '0.094114', '0.098677', '0.091900', '0.090459', '0.072428', '0.093419']
+Mean validation score: 0.089468
+Final test score (holdout): 0.096869
+---------------------------------------
+
+--- Model ID: JI7XXP1YVDJOF6MC ---
+n_features_all: 392
+n_features_selected: 14
+selected_indexes: [218, 307, 56, 266, 63, 67, 77, 336, 105, 376, 59, 73, 257, 42]
+Model type: HuberRegressor
+Hyperparameters: {'epsilon': 1.9526315904108804, 'max_iter': 147, 'alpha': 9.486697087212645e-08, 'warm_start': False, 'fit_intercept': True, 'tol': 7.247767929822242e-06}
+split_random_state: 671726336
+Score type: mean_squared_error
+Validation scores: ['0.097094', '0.098528', '0.074835', '0.090971', '0.088958', '0.077652', '0.087755', '0.094600', '0.093173', '0.096868']
+Mean validation score: 0.090043
+Final test score (holdout): 0.092705
+---------------------------------------
+
+--- Model ID: 6O3L23OWI9GN6W9X ---
+n_features_all: 392
+n_features_selected: 14
+selected_indexes: [218, 307, 56, 266, 63, 67, 77, 336, 105, 376, 59, 73, 257, 42]
+Model type: LinearRegression
+Hyperparameters: {'fit_intercept': False, 'tol': 1.0834051130162793e-08, 'positive': False}
+split_random_state: 1159465472
+Score type: mean_squared_error
+Validation scores: ['0.082746', '0.094627', '0.093674', '0.096293', '0.075839', '0.080852', '0.094041', '0.069570', '0.097483', '0.097577']
+Mean validation score: 0.088270
+Final test score (holdout): 0.105562
+---------------------------------------
+
+--- Model ID: MJ0ESB6NUUOB54AC ---
+n_features_all: 392
+n_features_selected: 14
+selected_indexes: [218, 307, 56, 266, 63, 67, 77, 336, 105, 376, 59, 73, 257, 42]
+Model type: ARDRegression
+Hyperparameters: {'max_iter': 613, 'tol': 1.3952193208626706e-07, 'alpha_1': 0.0011195173878053477, 'alpha_2': 1.354075061448471e-10, 'lambda_1': 4.837083729021517e-09, 'lambda_2': 0.002214510881853952, 'compute_score': True, 'threshold_lambda': 10969.915700403526, 'fit_intercept': False}
+split_random_state: 2778109184
+Score type: mean_squared_error
+Validation scores: ['0.084406', '0.097430', '0.096229', '0.096932', '0.098304', '0.085675', '0.087793', '0.086743', '0.098136', '0.085186']
+Mean validation score: 0.091683
+Final test score (holdout): 13.380018
+---------------------------------------
+
+--- Model ID: V82TO0VVM1ZQPF0K ---
+n_features_all: 392
+n_features_selected: 14
+selected_indexes: [218, 307, 56, 266, 63, 67, 77, 336, 105, 376, 59, 73, 257, 42]
+Model type: Ridge
+Hyperparameters: {'alpha': 0.0012905657660321308, 'fit_intercept': True, 'max_iter': 4790, 'tol': 3.8895187969222774e-05, 'solver': 'sag', 'positive': False, 'random_state': 3295531008}
+split_random_state: 64957952
+Score type: mean_squared_error
+Validation scores: ['0.090783', '0.075368', '0.087312', '0.093189', '0.086775', '0.096594', '0.084977', '0.097768', '0.082455', '0.094001']
+Mean validation score: 0.088922
+Final test score (holdout): 0.096837
+---------------------------------------
+
+--- Model ID: 2PEYA4YWVEXWEJQS ---
+n_features_all: 392
+n_features_selected: 14
+selected_indexes: [218, 307, 56, 266, 63, 67, 77, 336, 105, 376, 59, 73, 257, 42]
+Model type: LinearRegression
+Hyperparameters: {'fit_intercept': True, 'tol': 0.000987719782137925, 'positive': True}
+split_random_state: 3145602048
+Score type: mean_squared_error
+Validation scores: ['0.081471', '0.090249', '0.098569', '0.083560', '0.089500', '0.087101', '0.096388', '0.094660', '0.086813', '0.070928']
+Mean validation score: 0.087924
+Final test score (holdout): 0.103166
+---------------------------------------
+
+--- Model ID: U4U9R31AG4864ESB ---
+n_features_all: 392
+n_features_selected: 14
+selected_indexes: [218, 307, 56, 266, 63, 67, 77, 336, 105, 376, 59, 73, 257, 42]
+Model type: LinearRegression
+Hyperparameters: {'fit_intercept': False, 'tol': 8.258367957739882e-09, 'positive': False}
+split_random_state: 3184477184
+Score type: mean_squared_error
+Validation scores: ['0.083607', '0.071789', '0.091917', '0.082833', '0.079996', '0.090929', '0.083423', '0.085787', '0.097562', '0.073881']
+Mean validation score: 0.084172
+Final test score (holdout): 0.115904
+---------------------------------------
+
+--- Model ID: ZV6R8F6QE3K82793 ---
+n_features_all: 392
+n_features_selected: 14
+selected_indexes: [218, 307, 56, 266, 63, 67, 77, 336, 105, 376, 59, 73, 257, 42]
+Model type: BayesianRidge
+Hyperparameters: {'max_iter': 452, 'tol': 0.0004521844240199901, 'alpha_1': 2.0416342640274673e-07, 'alpha_2': 2.7552728311421884e-06, 'lambda_1': 4.080889494804291e-10, 'lambda_2': 2.460288657925509e-07, 'alpha_init': 0.9370142898836998, 'lambda_init': 0.9992568115329624, 'compute_score': True, 'fit_intercept': True}
+split_random_state: 2930830336
+Score type: mean_squared_error
+Validation scores: ['0.091342', '0.074403', '0.086634', '0.083266', '0.093953', '0.072502', '0.086748', '0.086003', '0.098104', '0.091046']
+Mean validation score: 0.086400
+Final test score (holdout): 0.112007
+---------------------------------------
