@@ -1,19 +1,14 @@
 #Ссылка на контест для этой задачи (assignment_final): https://contest.yandex.ru/contest/56809/problems/
 import numpy as np;
-import datetime,json,os,pathlib,pickle,random,string,time,typing;
+import datetime,json,os,pathlib,pickle,random,string,time;
 from sklearn.preprocessing import MaxAbsScaler,MinMaxScaler,RobustScaler,StandardScaler;
 from sklearn.model_selection import train_test_split,KFold,StratifiedKFold;
-from sklearn.impute import KNNImputer,SimpleImputer;
+from sklearn.impute import KNNImputer,SimpleImputer,MissingIndicator;
 #Импорты для классификации:
-#!!!predict_proba A method in classifiers and clusterers that can return probability estimates for each class/cluster.
 from sklearn.linear_model import LogisticRegression,PassiveAggressiveClassifier,Perceptron,RidgeClassifier,SGDClassifier;
 from sklearn.ensemble import AdaBoostClassifier,BaggingClassifier,ExtraTreesClassifier,GradientBoostingClassifier;
 from sklearn.ensemble import HistGradientBoostingClassifier,RandomForestClassifier;
-from sklearn.naive_bayes import BernoulliNB,ComplementNB,GaussianNB,MultinomialNB;
-from sklearn.gaussian_process import GaussianProcessClassifier;
-from sklearn.neighbors import KNeighborsClassifier,NearestCentroid,RadiusNeighborsClassifier;
-from sklearn.neural_network import MLPClassifier;
-from xgboost import XGBClassifier,XGBRFClassifier;from lightgbm import LGBMClassifier,DaskLGBMClassifier;
+from xgboost import XGBClassifier;from lightgbm import LGBMClassifier;
 from sklearn.metrics import accuracy_score,auc,average_precision_score,balanced_accuracy_score,brier_score_loss;
 from sklearn.metrics import cohen_kappa_score,dcg_score,f1_score,fbeta_score,hamming_loss,hinge_loss,jaccard_score;
 from sklearn.metrics import log_loss,matthews_corrcoef,ndcg_score,precision_score,recall_score,roc_auc_score,zero_one_loss;
@@ -23,10 +18,6 @@ from sklearn.linear_model import BayesianRidge,MultiTaskElasticNet,MultiTaskLass
 from sklearn.linear_model import TheilSenRegressor,GammaRegressor,PoissonRegressor,TweedieRegressor,PassiveAggressiveRegressor,LassoLars;
 from sklearn.ensemble import AdaBoostRegressor,BaggingRegressor,ExtraTreesRegressor,GradientBoostingRegressor;
 from sklearn.ensemble import HistGradientBoostingRegressor,RandomForestRegressor;
-from sklearn.gaussian_process import GaussianProcessRegressor;
-from sklearn.neighbors import KNeighborsRegressor,RadiusNeighborsRegressor;
-from sklearn.neural_network import MLPRegressor;
-from xgboost import XGBRegressor,XGBRFRegressor;from lightgbm import LGBMRegressor,DaskLGBMRegressor;
 from sklearn.metrics import d2_absolute_error_score,d2_pinball_score,d2_tweedie_score,explained_variance_score,max_error;
 from sklearn.metrics import mean_absolute_percentage_error,mean_gamma_deviance,mean_pinball_loss,mean_poisson_deviance;
 from sklearn.metrics import mean_squared_error,mean_squared_log_error,mean_tweedie_deviance,median_absolute_error;
@@ -37,12 +28,6 @@ from sklearn.feature_selection import SelectPercentile,SequentialFeatureSelector
 #Импорты для feature_selector (функции для score_func для SelectFdr,SelectFpr,SelectFwe,SelectKBest,SelectPercentile):
 from sklearn.feature_selection import chi2,f_classif,f_regression,mutual_info_classif,mutual_info_regression,r_regression;
 from sklearn.svm import LinearSVC,LinearSVR,NuSVC,NuSVR,SVC,SVR;
-
-AnyImputer:typing.TypeAlias=KNNImputer|SimpleImputer;#IterativeImputer is experimental and the API might change without any deprecation cycle.
-AnyScaler:typing.TypeAlias=MaxAbsScaler|MinMaxScaler|RobustScaler|StandardScaler;
-AnyFSEstimator:typing.TypeAlias=LogisticRegression|PassiveAggressiveClassifier|Perceptron|RidgeClassifier|SGDClassifier|LinearRegression|Ridge|SGDRegressor|ElasticNet|Lars|Lasso|LassoLars|LassoLarsIC|OrthogonalMatchingPursuit|ARDRegression|BayesianRidge|HuberRegressor|QuantileRegressor|RANSACRegressor|TheilSenRegressor|GammaRegressor|PoissonRegressor|TweedieRegressor|PassiveAggressiveRegressor|LinearSVC|NuSVC|SVC|LinearSVR|NuSVR|SVR;
-AnyFeatureSelector:typing.TypeAlias=GenericUnivariateSelect|RFE|RFECV|SelectFdr|SelectFpr|SelectFromModel|SelectFwe|SelectKBest|SelectPercentile|SequentialFeatureSelector;
-AnyModel:typing.TypeAlias=LogisticRegression|PassiveAggressiveClassifier|Perceptron|RidgeClassifier|SGDClassifier|AdaBoostClassifier|BaggingClassifier|ExtraTreesClassifier|GradientBoostingClassifier|HistGradientBoostingClassifier|RandomForestClassifier|XGBClassifier|LGBMClassifier|LinearRegression|Ridge|SGDRegressor|ElasticNet|Lasso|LassoLarsIC|ARDRegression|OrthogonalMatchingPursuit|BayesianRidge|MultiTaskElasticNet|MultiTaskLasso|HuberRegressor|QuantileRegressor|RANSACRegressor|Lars|TheilSenRegressor|GammaRegressor|PoissonRegressor|TweedieRegressor|PassiveAggressiveRegressor|LassoLars|AdaBoostRegressor|BaggingRegressor|ExtraTreesRegressor|GradientBoostingRegressor|HistGradientBoostingRegressor|RandomForestRegressor|XGBRFClassifier|XGBRegressor|XGBRFRegressor|DaskLGBMClassifier|LGBMRegressor|DaskLGBMRegressor|GaussianProcessClassifier|GaussianProcessRegressor|BernoulliNB|ComplementNB|GaussianNB|MultinomialNB|KNeighborsClassifier|NearestCentroid|RadiusNeighborsClassifier|KNeighborsRegressor|RadiusNeighborsRegressor|MLPClassifier|MLPRegressor;
 
 def true_with_prob(p:float=0.5)->bool:
     """Функция возвращает True с вероятностью p и False с вероятностью q=1-p"""
@@ -69,27 +54,6 @@ def str_to_float(s:str='1.0',num_min:float=0.0,num_max:float=1.0,num_default:flo
         print(f'Число num={num} больше чем num_max={num_max}, поэтому возвращено число {num_max}');
         num=num_max;
     return num;
-
-def generate_hidden_layer_sizes_tuple(n_layers:int=3,n_in:int=100,n_out:int=5,allow_increase:bool=False,log_scale:bool=False)->tuple[int]:
-    """Функция возвращает кортеж из чисел типа int, обозначающих количества нейронов в скрытых слоях Multi-layer Perceptron, n_in>n_out"""
-    sizes_lst:list[int]=[];
-    if n_layers<1:n_layers=1;
-    if n_in<1:n_in=1;
-    if n_out<1:n_out=1;
-    if n_in<n_out:allow_increase=True;#Иначе сеть не построить
-    if allow_increase==True:
-        if n_in>=n_out:
-            for i in range(n_layers):sizes_lst.append(random.randint(a=n_out,b=n_in));
-        else:
-            for i in range(n_layers):sizes_lst.append(random.randint(a=n_in,b=n_out));
-    else:#allow_increase==False
-        if log_scale==False:
-            step:int=(n_in-n_out)//(n_layers+1);
-            for i in range(n_layers):sizes_lst.append(random.randint(a=n_in-step*(i+2),b=n_in-step*(i+1)));
-        else:
-            log_step:float=(n_in/n_out)**(1/(n_layers+1));
-            for i in range(n_layers):sizes_lst.append(random.randint(a=int(n_in/(log_step**(i+2))),b=int(n_in/(log_step**(i+1)))));
-    return tuple(sizes_lst);
 
 #ОЧЕНЬ ПОЛЕЗНАЯ ФУНКЦИЯ (список словарей в Python в некотором смысле аналогичен массиву записей в Delphi)
 def read_csv(filename:str,delimiter_values:str=',')->list[dict]:#должна возвращать список словарей
@@ -161,7 +125,37 @@ def analize_log_pipelines_txt(log_pipelines_txt_file_name:str='log_pipelines.txt
     пайплайнах. Это полезно в том случае, если необходимо построить пайплайн с использованием не более чем некоторого количества признаков
     (например, в задаче [B. Финальное соревнование: задача 2], где в условии сказано: [Вторая модель должна быть линейной, т.е.
     представлять собой линейную комбинацию признаков плюс смещение, модель не должна использовать более 15 параметров (14 весов плюс
-    смещение)])\n"""
+    смещение)])\n
+    При таком условии:
+    1. Определяем лучшие признаки (условно, если признак номер 15 использован в 100 лучших пайплайнах, а признак номер 23 использован в
+    60 лучших пайплайнах, то наверное признак номер 15 полезнее, чем признак номер 23). Для каждого признака (его индекса) опредеяем,
+    количество раз, сколько этот признак использован в лучших пайплайнах, затем сортируем по убыванию этих количеств и отбираем 14 тех
+    признаков, которые использованы в наибольшем количестве моделей (именно 14 признаков, так как установлено ограничение в 15
+    параметров, один из которых - это смещение [bias])
+    2. Выполняем построение пайплайнов с отбором конкретно этих 14 признаков (использование различных пайплайнов, RandomSearch для подбора
+    гиперпараметров, кросс-валидация на 10 фолдов, тестирование на отложенной выборке, обучение прошедших порог пайплайнов на всех
+    открытых данных, их сохранение в *.pkl файлы вместе со Scaler и запись результатов в txt и csv логи)
+    3. Затем отбор пайплайнов, удоветворяющих пороговым значениям score_valid_mean и score_test (функция analize_log_pipelines_csv) и
+    усреднение их предсказаний. Каждая модель линейная и имеет 14 коэффициентов k0,...,k13 + bias следовательно для усреднения
+    их предсказаний усредняем их коэффициенты k0,...,k13 и bias. Например, если отобрано 100 лучших пайплайнов, значит
+    k0=(k0[0]+k0[1]+..+k0[99])/100, k1=(k1[0]+k1[1]+..+k1[99])/100, ..., k13=(k13[0]+k13[1]+..+k13[99])/100,
+    bias=(bias[0]+bias[1]+..+bias[99])/100
+    Нужно будет ещё подумать над scaler для каждого из 14 признаков, но тут скорее всего Scaler у всех моделей будет одинаковый
+    (так как Scaler не зависит от того, какая после него применена модель + каждая итоговая модель [сохраняемая затем в *.pkl файл]
+    обучается на всех 100% открытых данных, поэтому очевидно, что при задании фиксированного списка лучших признаков [randomly_selected_indexes]
+    scaler у моделей во всех *.pkl файлах должны быть одинаковые).\n
+    После применения функции analize_one_pkl_file к двум pkl файлам моделей подтверждено, что всё содержимое scaler у разных моделей
+    полностью совпадает, например: value.__dict__: {'with_mean': True, 'with_std': True, 'copy': True, 'n_features_in_': 392, 'n_samples_seen_': 800, 'mean_': array([-5.62410914e-01,  2.58281096e-01, -5.68630481e-01, -6.69724427e-04,...
+    \n
+    Равенство Scaler для разных моделей - это правильно, но почему-то и model и scaler выдают: 'n_features_in_': 392
+    \nP.S. 'n_features_in_': 392 - это было следствием ошибки в начале код функции run_one_pipeline_experiment_v1 в части: 
+    отбор num_features_select_from_all признаков из всех. Из-за этой ошибки если максимальное и минимальное количества используемых
+    признаков заданы как нули, то даже при заданном списке индексов в массивы opened_data и closed_data попадали все признаки (392
+    признака в этой задаче). Именно из-за такого огромного количества признаков при проведении эксперимента много раз за почти сутки
+    появилось только около 40 +-хороших моделей. Теперь эта ошибка ИСПРАВЛЕНА. Теперь сначала проверяется наличие списка индексов
+    признаков, затем если его нет, то список индексов признаков заполняется.
+
+    \nЕсли ограничение на количество признаков не установлено, то вероятно эта функция не очень нужна"""
     with open(file=log_pipelines_txt_file_name,mode='rt',encoding='UTF-8')as f:
         txt_log_lines:list[str]=[line.rstrip('\n') for line in f.readlines()];
     print(f'len(txt_log_lines): {len(txt_log_lines)}');
@@ -272,6 +266,7 @@ def data_transformation_add_functions(feature_matrix:np.ndarray)->np.ndarray:
         new_feature_matrix[:,current_col+12]=np.exp(-x**2);         #13. gauss(x)=exp(-x^2)
         current_col=current_col+13;#Увеличение current_col на количество добавленных признаков
     return new_feature_matrix;
+
 
 def load_data_from_npy(rewrite_features_csv_files:bool=False)->tuple[np.ndarray,np.ndarray,np.ndarray,np.ndarray,np.ndarray,np.ndarray]:
     """Загрузка данных из *.npy файлов (эти файлы содержат массивы NumPy)"""
@@ -389,18 +384,20 @@ def load_data_from_npy(rewrite_features_csv_files:bool=False)->tuple[np.ndarray,
         with open(file=closed_data_all_features_csv_file_name,mode='wt',encoding='UTF-8')as f_csv:f_csv.writelines(closed_buf_str_list);
     return opened_data_all_features,opened_target,opened_ids,closed_data_all_features,closed_target,closed_ids;
 
+
+
 def create_log_files()->None:
     """Функция создаёт log файлы (если они не существуют)"""
     if pathlib.Path('log_pipelines.txt').exists()==False:#Создать файл log_pipelines.txt если его не существует
         with open(file='log_pipelines.txt',mode='wt',encoding='UTF-8')as f_log:pass;
     if pathlib.Path('log_pipelines.csv').exists()==False:#Создать файл log_pipelines.csv если его не существует и заполнить его заголовок
         with open(file='log_pipelines.csv',mode='wt',encoding='UTF-8')as f_log:
-            header_str:str=f'pipeline_id,n_features_all,n_features_selected_randomly,use_imputer,imputer_type,use_var_thresholder,var_thresholder_type,use_scaler,scaler_type,use_feature_selector,feature_selector_type,fs_score_func_type,fs_estimator_type,model_type,score_type,score_valid_mean,score_valid_std,score_test,dt_pipe_start_str,seconds_processing,pipeline_file_size';
+            header_str:str=f'pipeline_id,n_features_all,n_features_selected_randomly,use_imputer,imputer_type,use_var_thresholder,var_thresholder_type,use_scaler,scaler_type,use_feature_selector,feature_selector_type,fs_score_func_type,fs_estimator_type,model_type,score_type,score_valid_mean,score_valid_std,score_test,dt_pipe_start_str,seconds_processing';
             print(header_str,file=f_log);
     if pathlib.Path('log_results.txt').exists()==False:#Создать файл log_results.txt если его не существует
         with open(file='log_results.txt',mode='wt',encoding='UTF-8')as f_log:pass;
 
-def run_one_pipeline_experiment_v1(num_features_select_from_all_min:int=5,num_features_select_from_all_max:int=50,randomly_selected_indexes:list[int]=None,problem_type:str='regression',task_output:str='mono_output',score_type:str='mean_squared_error',fbeta_score_beta:float=1.0,d2_pinball_score_alpha:float=0.5,d2_tweedie_score_power:float=0.0,mean_pinball_loss_alpha:float=0.5,mean_tweedie_deviance_power:float=0.0,use_imputer_probability:float=0.95,imputer_type:str=None,imputer_hyperparams:dict=None,use_var_thresholder_probability:float=0.95,var_thresholder_type:str=None,var_thresholder_hyperparams:dict=None,use_feature_selector_probability:float=0.7,feature_selector_type:str=None,prefered_feature_selector_types:list[str]=None,feature_selector_hyperparams:dict=None,fs_score_func_type:str=None,fs_estimator_type:str=None,prefered_fs_estimator_types:list[str]=None,fs_estimator_hyperparams:dict=None,use_scaler_probability:float=0.9,scaler_type:str=None,prefered_scaler_types:list[str]=None,scaler_hyperparams:dict=None,model_type:str=None,prefered_model_types:list[str]=None,model_hyperparams:dict=None,num_folds:int=10,score_valid_min_threshold:float=None,score_valid_max_threshold:float=None,non_negative_y_guarantee:bool=False,use_only_linear_models:bool=False,n_cpu_cores:int=-1)->str:
+def run_one_pipeline_experiment_v1(num_features_select_from_all_min:int=5,num_features_select_from_all_max:int=50,randomly_selected_indexes:list[int]=None,problem_type:str='regression',task_output:str='mono_output',score_type:str='mean_squared_error',fbeta_score_beta:float=1.0,d2_pinball_score_alpha:float=0.5,d2_tweedie_score_power:float=0.0,mean_pinball_loss_alpha:float=0.5,mean_tweedie_deviance_power:float=0.0,use_imputer_probability:float=0.95,imputer_type:str=None,imputer_hyperparams:dict=None,use_var_thresholder_probability:float=0.95,var_thresholder_type:str=None,var_thresholder_hyperparams:dict=None,use_feature_selector_probability:float=0.7,feature_selector_type:str=None,feature_selector_hyperparams:dict=None,fs_score_func_type:str=None,fs_estimator_type:str=None,fs_estimator_hyperparams:dict=None,use_scaler_probability:float=0.9,scaler_type:str=None,scaler_hyperparams:dict=None,model_type:str=None,model_hyperparams:dict=None,num_folds:int=10,score_valid_min_threshold:float=None,score_valid_max_threshold:float=None,non_negative_y_guarantee:bool=False,use_only_linear_models:bool=False)->str:
     """
     Запуск одного эксперимента со случайным выбором пайплайна, его компонентов и их гиперпараметров\n
     problem_type='classification'|'regression'\n
@@ -482,7 +479,10 @@ def run_one_pipeline_experiment_v1(num_features_select_from_all_min:int=5,num_fe
     #Все этапы пайплайна (imputer, var_thresholder, scaler, feature_selector, model) применяются к одному и тому же набору признаков (который
     #выбран в соответствии со списком randomly_selected_indexes)
 
-    # 2. Разделение на train (для cross_valid) и final_test (для оценки на holdout)
+
+
+
+    # 2. Разделение на train (для CV) и final test (только для оценки!)
     split_random_state:int=int(time.time()*(10**9))%(2**32);#Количество наносекунд с начала эпохи Unix -> [0, 4294967295]
     hyperparam_random_state:int=int(random.uniform(a=0.0,b=1e20))%(2**32);
     score_func_random_state:int=int(random.uniform(a=0.0,b=1e20))%(2**32);
@@ -506,9 +506,9 @@ def run_one_pipeline_experiment_v1(num_features_select_from_all_min:int=5,num_fe
             imputer_types:list[str]=['KNNImputer','SimpleImputer'];
             imputer_type=random.choice(seq=imputer_types);
         if imputer_hyperparams is None:
-            imputer_hyperparams:dict[str,int|float|bool|str];
-            if imputer_type=='KNNImputer':imputer_hyperparams={'n_neighbors':random.randint(a=1,b=15),'weights':random.choice(seq=['uniform','distance']),'metric':'nan_euclidean','copy':True,'add_indicator':random.choice(seq=[True,False]),'keep_empty_features':random.choice(seq=[True,False])};
-            elif imputer_type=='SimpleImputer':imputer_hyperparams={'strategy':random.choice(seq=['mean','median','most_frequent','constant']),'fill_value':None,'copy':True,'add_indicator':random.choice(seq=[True,False]),'keep_empty_features':random.choice(seq=[True,False])};
+            if imputer_type=='IterativeImputer':imputer_hyperparams:dict={'sample_posterior':random.choice(seq=[True,False]),'max_iter':random.randint(a=1,b=30),'tol':10**random.uniform(a=-5,b=-1),'n_nearest_features':None,'initial_strategy':random.choice(seq=['mean','median','most_frequent','constant']),'fill_value':None,'imputation_order':random.choice(seq=['ascending','descending','roman','arabic','random']),'skip_complete':random.choice(seq=[True,False]),'add_indicator':random.choice(seq=[True,False]),'keep_empty_features':random.choice(seq=[True,False]),'random_state':hyperparam_random_state};
+            elif imputer_type=='KNNImputer':imputer_hyperparams:dict={'n_neighbors':random.randint(a=1,b=15),'weights':random.choice(seq=['uniform','distance']),'metric':'nan_euclidean','copy':True,'add_indicator':random.choice(seq=[True,False]),'keep_empty_features':random.choice(seq=[True,False])};
+            elif imputer_type=='SimpleImputer':imputer_hyperparams:dict={'strategy':random.choice(seq=['mean','median','most_frequent','constant']),'fill_value':None,'copy':True,'add_indicator':random.choice(seq=[True,False]),'keep_empty_features':random.choice(seq=[True,False])};
     else:
         print(f'Выбрано use_imputer==False, imputer не применяется');
         imputer_hyperparams=None;imputer_type=None;
@@ -519,8 +519,7 @@ def run_one_pipeline_experiment_v1(num_features_select_from_all_min:int=5,num_fe
             var_thresholder_types:list[str]=['VarianceThreshold'];
             var_thresholder_type=random.choice(seq=var_thresholder_types);
         if var_thresholder_hyperparams is None:
-            var_thresholder_hyperparams:dict[str,int|float|bool|str];
-            if var_thresholder_type=='VarianceThreshold':var_thresholder_hyperparams={'threshold':10**random.uniform(a=-15,b=1)};
+            if var_thresholder_type=='VarianceThreshold':var_thresholder_hyperparams:dict={'threshold':10**random.uniform(a=-15,b=1)};
     else:
         print(f'Выбрано use_var_thresholder==False, var_thresholder не применяется');
         var_thresholder_hyperparams=None;var_thresholder_type=None;
@@ -529,10 +528,8 @@ def run_one_pipeline_experiment_v1(num_features_select_from_all_min:int=5,num_fe
     if use_scaler==True:
         if scaler_type is None:#Выбор случайного scaler из списка:
             scaler_types:list[str]=['MaxAbsScaler','MinMaxScaler','RobustScaler','StandardScaler'];
-            if prefered_scaler_types is not None:scaler_types=list(set(scaler_types).intersection(set(prefered_scaler_types)));
             scaler_type:str=random.choice(seq=scaler_types);
         if scaler_hyperparams is None:
-            scaler_hyperparams:dict[str,int|float|bool|str];
             if scaler_type=='MaxAbsScaler':scaler_hyperparams={'copy':True};
             elif scaler_type=='MinMaxScaler':scaler_hyperparams={'feature_range':(0,1),'copy':True,'clip':False};
             elif scaler_type=='RobustScaler':scaler_hyperparams={'with_centering':true_with_prob(p=0.85),'with_scaling':true_with_prob(p=0.85),'quantile_range':(random.uniform(a=0.0,b=40.0),random.uniform(a=60.0,b=100.0)),'copy':True,'unit_variance':true_with_prob(p=0.1)};
@@ -553,10 +550,8 @@ def run_one_pipeline_experiment_v1(num_features_select_from_all_min:int=5,num_fe
             feature_selector_types_estimator_not_rfe:list[str]=['SelectFromModel','SequentialFeatureSelector'];
             feature_selector_types_estimator_all:list[str]=feature_selector_types_estimator_rfe+feature_selector_types_estimator_not_rfe;
             feature_selector_types_score_func_based:list[str]=['GenericUnivariateSelect','SelectFdr','SelectFpr','SelectFwe','SelectKBest','SelectPercentile'];
-            if prefered_feature_selector_types is not None:feature_selector_types_all=list(set(feature_selector_types_all).intersection(set(prefered_feature_selector_types)));
             feature_selector_type:str=random.choice(seq=feature_selector_types_all);
         if feature_selector_hyperparams is None:
-            feature_selector_hyperparams:dict[str,int|float|bool|str];
             if feature_selector_type in feature_selector_types_estimator_rfe:#Нужно выбрать тип и гиперпараметры для estimator
                 if problem_type=='classification':fs_estimator_types:list[str]=['LinearSVC','NuSVC','SVC'];
                 elif problem_type=='regression':fs_estimator_types:list[str]=['LinearSVR','NuSVR','SVR'];
@@ -567,43 +562,41 @@ def run_one_pipeline_experiment_v1(num_features_select_from_all_min:int=5,num_fe
                     fs_estimator_types:list[str]=['LinearRegression','Ridge','SGDRegressor','ElasticNet','Lars','Lasso','LassoLars','LassoLarsIC','OrthogonalMatchingPursuit','ARDRegression','BayesianRidge','HuberRegressor','QuantileRegressor','RANSACRegressor','TheilSenRegressor','GammaRegressor','PoissonRegressor','TweedieRegressor','PassiveAggressiveRegressor'];
             if feature_selector_type in feature_selector_types_estimator_all:#Если есть estimator, то нужно выбрать для него гиперпараметры
                 if fs_estimator_type is None:
-                    if prefered_fs_estimator_types is not None:fs_estimator_types=list(set(fs_estimator_types).intersection(set(prefered_fs_estimator_types)));
                     fs_estimator_type:str=random.choice(seq=fs_estimator_types);
                     if fs_estimator_hyperparams is None:
-                        fs_estimator_hyperparams:dict[str,int|float|bool|str];
-                        if fs_estimator_type=='LogisticRegression':fs_estimator_hyperparams={'penalty':random.choice(seq=['l1','l2','elasticnet',None]),'dual':random.choice(seq=[True,False]),'tol':10**random.uniform(a=-8,b=0),'C':random.uniform(a=0.5,b=1.5),'fit_intercept':random.choice(seq=[True,False]),'solver':random.choice(seq=['lbfgs','liblinear','newton-cg','newton-cholesky','sag','saga']),'max_iter':random.randint(a=50,b=500),'warm_start':random.choice(seq=[True,False]),'l1_ratio':random.uniform(a=0.0,b=1.0),'random_state':hyperparam_random_state,'n_jobs':n_cpu_cores};
-                        elif fs_estimator_type=='PassiveAggressiveClassifier':fs_estimator_hyperparams={'C':random.uniform(a=0.5,b=1.5),'fit_intercept':random.choice(seq=[True,False]),'max_iter':random.randint(a=100,b=3000),'tol':10**random.uniform(a=-7,b=1),'early_stopping':random.choice(seq=[True,False]),'validation_fraction':random.uniform(a=0.0,b=1.0),'n_iter_no_change':random.randint(a=3,b=10),'shuffle':random.choice(seq=[True,False]),'loss':random.choice(seq=['hinge','squared_hinge']),'warm_start':random.choice(seq=[True,False]),'average':random.choice(seq=[True,False,1,2,3,4,5,6,7,8,9,10]),'random_state':hyperparam_random_state,'n_jobs':n_cpu_cores};
-                        elif fs_estimator_type=='Perceptron':fs_estimator_hyperparams={'penalty':random.choice(seq=['l1','l2','elasticnet',None]),'alpha':10**random.uniform(a=-12,b=0),'l1_ratio':random.uniform(a=0.0,b=1.0),'fit_intercept':random.choice(seq=[True,False]),'max_iter':random.randint(a=100,b=5000),'tol':10**random.uniform(a=-6,b=0),'shuffle':random.choice(seq=[True,False]),'early_stopping':random.choice(seq=[True,False]),'validation_fraction':random.uniform(a=0.0,b=1.0),'n_iter_no_change':random.randint(a=3,b=10),'warm_start':random.choice(seq=[True,False]),'random_state':hyperparam_random_state,'n_jobs':n_cpu_cores};
-                        elif fs_estimator_type=='RidgeClassifier':fs_estimator_hyperparams={'alpha':10**random.uniform(a=-2,b=1),'fit_intercept':random.choice(seq=[True,False]),'max_iter':random.randint(a=100,b=5000),'tol':10**random.uniform(a=-8,b=0),'solver':random.choice(seq=['auto','svd','cholesky','lsqr','sparse_cg','sag','saga','lbfgs']),'positive':random.choice(seq=[True,False]),'random_state':hyperparam_random_state,'n_jobs':n_cpu_cores};
-                        elif fs_estimator_type=='SGDClassifier':fs_estimator_hyperparams={'loss':random.choice(seq=['hinge','log_loss','modified_huber','squared_hinge','perceptron','squared_error','huber','epsilon_insensitive','squared_epsilon_insensitive']),'penalty':random.choice(seq=['l1','l2','elasticnet',None]),'alpha':10**random.uniform(a=-8,b=0),'l1_ratio':random.uniform(a=0.0,b=1.0),'fit_intercept':random.choice(seq=[True,False]),'max_iter':random.randint(a=100,b=5000),'tol':10**random.uniform(a=-6,b=0),'shuffle':random.choice(seq=[True,False]),'epsilon':10**random.uniform(a=-9,b=3),'learning_rate':random.choice(seq=['constant','optimal','invscaling','adaptive']),'eta0':10**random.uniform(a=-5,b=1),'power_t':random.uniform(a=-5,b=6),'early_stopping':random.choice(seq=[True,False]),'validation_fraction':random.uniform(a=0.0,b=1.0),'n_iter_no_change':random.randint(a=3,b=10),'warm_start':random.choice(seq=[True,False]),'average':random.choice(seq=[True,False,1,2,3,4,5,6,7,8,9,10]),'random_state':hyperparam_random_state,'n_jobs':n_cpu_cores};
-                        elif fs_estimator_type=='LinearRegression':fs_estimator_hyperparams={'fit_intercept':random.choice(seq=[True,False]),'tol':10**random.uniform(a=-9,b=-3),'positive':random.choice(seq=[True,False])};
-                        elif fs_estimator_type=='Ridge':fs_estimator_hyperparams={'alpha':10**random.uniform(a=-4,b=2),'fit_intercept':random.choice(seq=[True,False]),'max_iter':random.randint(a=500,b=20000),'tol':10**random.uniform(a=-9,b=-0.1),'solver':random.choice(seq=['auto','svd','cholesky','lsqr','sparse_cg','sag','saga','lbfgs']),'positive':bool(random.randint(a=0,b=1)),'random_state':hyperparam_random_state};
-                        elif fs_estimator_type=='SGDRegressor':fs_estimator_hyperparams={'loss':random.choice(seq=['squared_error','huber','epsilon_insensitive','squared_epsilon_insensitive']),'penalty':random.choice(seq=['l1','l2','elasticnet',None]),'alpha':10**random.uniform(a=-9,b=1.0),'l1_ratio':random.uniform(a=0.0,b=1.0),'fit_intercept':random.choice(seq=[True,False]),'max_iter':random.randint(a=100,b=20000),'tol':10**random.uniform(a=-6,b=0),'epsilon':10**random.uniform(a=-3,b=1),'learning_rate':random.choice(seq=['constant','optimal','invscaling','adaptive']),'eta0':10**random.uniform(a=-5,b=0),'power_t':random.uniform(a=-100,b=100),'early_stopping':random.choice(seq=[True,False]),'validation_fraction':random.uniform(a=0,b=1),'n_iter_no_change':random.randint(a=2,b=10),'warm_start':random.choice(seq=[True,False]),'average':random.choice(seq=[False,False,False,False,False,False,False,False,False,False,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20]),'random_state':hyperparam_random_state};
-                        elif fs_estimator_type=='ElasticNet':fs_estimator_hyperparams={'alpha':10**random.uniform(a=-5,b=2),'l1_ratio':random.uniform(a=0,b=1),'fit_intercept':random.choice(seq=[True,False]),'max_iter':random.randint(a=100,b=5000),'tol':10**random.uniform(a=-7,b=-1),'warm_start':random.choice(seq=[True,False]),'positive':random.choice(seq=[True,False]),'selection':random.choice(seq=['cyclic','random']),'random_state':hyperparam_random_state};
-                        elif fs_estimator_type=='Lars':fs_estimator_hyperparams={'fit_intercept':random.choice(seq=[True,False]),'n_nonzero_coefs':random.randint(a=10,b=100),'eps':10**random.uniform(a=-5,b=-1),'fit_path':random.choice(seq=[True,False]),'jitter':10**random.uniform(a=-9,b=-1),'random_state':hyperparam_random_state};
-                        elif fs_estimator_type=='Lasso':fs_estimator_hyperparams={'alpha':10**random.uniform(a=-5,b=2),'fit_intercept':random.choice(seq=[True,False]),'max_iter':random.randint(100,2000),'tol':10**random.uniform(a=-8,b=-1),'warm_start':random.choice(seq=[True,False]),'positive':random.choice(seq=[True,False]),'selection':random.choice(seq=['cyclic','random']),'random_state':hyperparam_random_state};
-                        elif fs_estimator_type=='LassoLars':fs_estimator_hyperparams={'alpha':10**random.uniform(a=-5,b=2),'fit_intercept':random.choice(seq=[True,False]),'max_iter':random.randint(a=100,b=1500),'eps':10**random.uniform(a=-10,b=-5),'fit_path':random.choice(seq=[True,False]),'positive':random.choice(seq=[True,False]),'jitter':10**random.uniform(a=-9,b=-1),'random_state':hyperparam_random_state};
-                        elif fs_estimator_type=='LassoLarsIC':fs_estimator_hyperparams={'criterion':random.choice(seq=['aic','bic']),'fit_intercept':random.choice(seq=[True,False]),'max_iter':random.randint(a=100,b=1500),'eps':10**random.uniform(a=-16,b=-10),'positive':random.choice(seq=[True,False]),'noise_variance':10**random.uniform(a=-5,b=-1)};
-                        elif fs_estimator_type=='OrthogonalMatchingPursuit':fs_estimator_hyperparams={'n_nonzero_coefs':None if true_with_prob(p=0.5)==True else random.randint(a=5,b=50),'tol':None if true_with_prob(p=0.5)==True else 10**random.uniform(a=-2,b=2),'fit_intercept':random.choice(seq=[True,False])};
-                        elif fs_estimator_type=='ARDRegression':fs_estimator_hyperparams={'max_iter':random.randint(a=100,b=700),'tol':10**random.uniform(a=-7,b=-1),'alpha_1':10**random.uniform(a=-10,b=-2),'alpha_2':10**random.uniform(a=-10,b=-2),'lambda_1':10**random.uniform(a=-10,b=-2),'lambda_2':10**random.uniform(a=-10,b=-2),'compute_score':random.choice(seq=[True,False]),'threshold_lambda':random.uniform(a=5000,b=15000),'fit_intercept':random.choice(seq=[True,False])};
-                        elif fs_estimator_type=='BayesianRidge':fs_estimator_hyperparams={'max_iter':random.randint(a=100,b=700),'tol':10**random.uniform(a=-5,b=-1),'alpha_1':10**random.uniform(a=-10,b=-2),'alpha_2':10**random.uniform(a=-10,b=-2),'lambda_1':10**random.uniform(a=-10,b=-2),'lambda_2':10**random.uniform(a=-10,b=-2),'alpha_init':random.uniform(a=0.01,b=1.0),'lambda_init':random.uniform(a=0.01,b=1.0),'compute_score':random.choice(seq=[True,False]),'fit_intercept':random.choice(seq=[True,False])};
-                        elif fs_estimator_type=='HuberRegressor':fs_estimator_hyperparams={'epsilon':random.uniform(a=1.0,b=10.0),'max_iter':random.randint(a=20,b=200),'alpha':10**random.uniform(a=-8,b=0),'warm_start':random.choice(seq=[True,False]),'fit_intercept':random.choice(seq=[True,False]),'tol':10**random.uniform(a=-8,b=-2)};
+                        if fs_estimator_type=='LogisticRegression':fs_estimator_hyperparams:dict={'penalty':random.choice(seq=['l1','l2','elasticnet',None]),'dual':random.choice(seq=[True,False]),'tol':10**random.uniform(a=-8,b=0),'C':random.uniform(a=0.5,b=1.5),'fit_intercept':random.choice(seq=[True,False]),'solver':random.choice(seq=['lbfgs','liblinear','newton-cg','newton-cholesky','sag','saga']),'max_iter':random.randint(a=50,b=500),'warm_start':random.choice(seq=[True,False]),'l1_ratio':random.uniform(a=0.0,b=1.0),'random_state':hyperparam_random_state,'n_jobs':-1};
+                        elif fs_estimator_type=='PassiveAggressiveClassifier':fs_estimator_hyperparams:dict={'C':random.uniform(a=0.5,b=1.5),'fit_intercept':random.choice(seq=[True,False]),'max_iter':random.randint(a=100,b=3000),'tol':10**random.uniform(a=-7,b=1),'early_stopping':random.choice(seq=[True,False]),'validation_fraction':random.uniform(a=0.0,b=1.0),'n_iter_no_change':random.randint(a=3,b=10),'shuffle':random.choice(seq=[True,False]),'loss':random.choice(seq=['hinge','squared_hinge']),'warm_start':random.choice(seq=[True,False]),'average':random.choice(seq=[True,False,1,2,3,4,5,6,7,8,9,10]),'random_state':hyperparam_random_state,'n_jobs':-1};
+                        elif fs_estimator_type=='Perceptron':fs_estimator_hyperparams:dict={'penalty':random.choice(seq=['l1','l2','elasticnet',None]),'alpha':10**random.uniform(a=-12,b=0),'l1_ratio':random.uniform(a=0.0,b=1.0),'fit_intercept':random.choice(seq=[True,False]),'max_iter':random.randint(a=100,b=5000),'tol':10**random.uniform(a=-6,b=0),'shuffle':random.choice(seq=[True,False]),'early_stopping':random.choice(seq=[True,False]),'validation_fraction':random.uniform(a=0.0,b=1.0),'n_iter_no_change':random.randint(a=3,b=10),'warm_start':random.choice(seq=[True,False]),'random_state':hyperparam_random_state,'n_jobs':-1};
+                        elif fs_estimator_type=='RidgeClassifier':fs_estimator_hyperparams:dict={'alpha':10**random.uniform(a=-2,b=1),'fit_intercept':random.choice(seq=[True,False]),'max_iter':random.randint(a=100,b=5000),'tol':10**random.uniform(a=-8,b=0),'solver':random.choice(seq=['auto','svd','cholesky','lsqr','sparse_cg','sag','saga','lbfgs']),'positive':random.choice(seq=[True,False]),'random_state':hyperparam_random_state,'n_jobs':-1};
+                        elif fs_estimator_type=='SGDClassifier':fs_estimator_hyperparams:dict={'loss':random.choice(seq=['hinge','log_loss','modified_huber','squared_hinge','perceptron','squared_error','huber','epsilon_insensitive','squared_epsilon_insensitive']),'penalty':random.choice(seq=['l1','l2','elasticnet',None]),'alpha':10**random.uniform(a=-8,b=0),'l1_ratio':random.uniform(a=0.0,b=1.0),'fit_intercept':random.choice(seq=[True,False]),'max_iter':random.randint(a=100,b=5000),'tol':10**random.uniform(a=-6,b=0),'shuffle':random.choice(seq=[True,False]),'epsilon':10**random.uniform(a=-9,b=3),'learning_rate':random.choice(seq=['constant','optimal','invscaling','adaptive']),'eta0':10**random.uniform(a=-5,b=1),'power_t':random.uniform(a=-5,b=6),'early_stopping':random.choice(seq=[True,False]),'validation_fraction':random.uniform(a=0.0,b=1.0),'n_iter_no_change':random.randint(a=3,b=10),'warm_start':random.choice(seq=[True,False]),'average':random.choice(seq=[True,False,1,2,3,4,5,6,7,8,9,10]),'random_state':hyperparam_random_state,'n_jobs':-1};
+                        elif fs_estimator_type=='LinearRegression':fs_estimator_hyperparams:dict={'fit_intercept':random.choice(seq=[True,False]),'tol':10**random.uniform(a=-9,b=-3),'positive':random.choice(seq=[True,False])};
+                        elif fs_estimator_type=='Ridge':fs_estimator_hyperparams:dict={'alpha':10**random.uniform(a=-4,b=2),'fit_intercept':random.choice(seq=[True,False]),'max_iter':random.randint(a=500,b=20000),'tol':10**random.uniform(a=-9,b=-0.1),'solver':random.choice(seq=['auto','svd','cholesky','lsqr','sparse_cg','sag','saga','lbfgs']),'positive':bool(random.randint(a=0,b=1)),'random_state':hyperparam_random_state};
+                        elif fs_estimator_type=='SGDRegressor':fs_estimator_hyperparams:dict={'loss':random.choice(seq=['squared_error','huber','epsilon_insensitive','squared_epsilon_insensitive']),'penalty':random.choice(seq=['l1','l2','elasticnet',None]),'alpha':10**random.uniform(a=-9,b=1.0),'l1_ratio':random.uniform(a=0.0,b=1.0),'fit_intercept':random.choice(seq=[True,False]),'max_iter':random.randint(a=100,b=20000),'tol':10**random.uniform(a=-6,b=0),'epsilon':10**random.uniform(a=-3,b=1),'learning_rate':random.choice(seq=['constant','optimal','invscaling','adaptive']),'eta0':10**random.uniform(a=-5,b=0),'power_t':random.uniform(a=-100,b=100),'early_stopping':random.choice(seq=[True,False]),'validation_fraction':random.uniform(a=0,b=1),'n_iter_no_change':random.randint(a=2,b=10),'warm_start':random.choice(seq=[True,False]),'average':random.choice(seq=[False,False,False,False,False,False,False,False,False,False,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20]),'random_state':hyperparam_random_state};
+                        elif fs_estimator_type=='ElasticNet':fs_estimator_hyperparams:dict={'alpha':10**random.uniform(a=-5,b=2),'l1_ratio':random.uniform(a=0,b=1),'fit_intercept':random.choice(seq=[True,False]),'max_iter':random.randint(a=100,b=5000),'tol':10**random.uniform(a=-7,b=-1),'warm_start':random.choice(seq=[True,False]),'positive':random.choice(seq=[True,False]),'selection':random.choice(seq=['cyclic','random']),'random_state':hyperparam_random_state};
+                        elif fs_estimator_type=='Lars':fs_estimator_hyperparams:dict={'fit_intercept':random.choice(seq=[True,False]),'n_nonzero_coefs':random.randint(a=10,b=100),'eps':10**random.uniform(a=-5,b=-1),'fit_path':random.choice(seq=[True,False]),'jitter':10**random.uniform(a=-9,b=-1),'random_state':hyperparam_random_state};
+                        elif fs_estimator_type=='Lasso':fs_estimator_hyperparams:dict={'alpha':10**random.uniform(a=-5,b=2),'fit_intercept':random.choice(seq=[True,False]),'max_iter':random.randint(100,2000),'tol':10**random.uniform(a=-8,b=-1),'warm_start':random.choice(seq=[True,False]),'positive':random.choice(seq=[True,False]),'selection':random.choice(seq=['cyclic','random']),'random_state':hyperparam_random_state};
+                        elif fs_estimator_type=='LassoLars':fs_estimator_hyperparams:dict={'alpha':10**random.uniform(a=-5,b=2),'fit_intercept':random.choice(seq=[True,False]),'max_iter':random.randint(a=100,b=1500),'eps':10**random.uniform(a=-10,b=-5),'fit_path':random.choice(seq=[True,False]),'positive':random.choice(seq=[True,False]),'jitter':10**random.uniform(a=-9,b=-1),'random_state':hyperparam_random_state};
+                        elif fs_estimator_type=='LassoLarsIC':fs_estimator_hyperparams:dict={'criterion':random.choice(seq=['aic','bic']),'fit_intercept':random.choice(seq=[True,False]),'max_iter':random.randint(a=100,b=1500),'eps':10**random.uniform(a=-16,b=-10),'positive':random.choice(seq=[True,False]),'noise_variance':10**random.uniform(a=-5,b=-1)};
+                        elif fs_estimator_type=='OrthogonalMatchingPursuit':fs_estimator_hyperparams:dict={'n_nonzero_coefs':None if true_with_prob(p=0.5)==True else random.randint(a=5,b=50),'tol':None if true_with_prob(p=0.5)==True else 10**random.uniform(a=-2,b=2),'fit_intercept':random.choice(seq=[True,False])};
+                        elif fs_estimator_type=='ARDRegression':fs_estimator_hyperparams:dict={'max_iter':random.randint(a=100,b=700),'tol':10**random.uniform(a=-7,b=-1),'alpha_1':10**random.uniform(a=-10,b=-2),'alpha_2':10**random.uniform(a=-10,b=-2),'lambda_1':10**random.uniform(a=-10,b=-2),'lambda_2':10**random.uniform(a=-10,b=-2),'compute_score':random.choice(seq=[True,False]),'threshold_lambda':random.uniform(a=5000,b=15000),'fit_intercept':random.choice(seq=[True,False])};
+                        elif fs_estimator_type=='BayesianRidge':fs_estimator_hyperparams:dict={'max_iter':random.randint(a=100,b=700),'tol':10**random.uniform(a=-5,b=-1),'alpha_1':10**random.uniform(a=-10,b=-2),'alpha_2':10**random.uniform(a=-10,b=-2),'lambda_1':10**random.uniform(a=-10,b=-2),'lambda_2':10**random.uniform(a=-10,b=-2),'alpha_init':random.uniform(a=0.01,b=1.0),'lambda_init':random.uniform(a=0.01,b=1.0),'compute_score':random.choice(seq=[True,False]),'fit_intercept':random.choice(seq=[True,False])};
+                        elif fs_estimator_type=='HuberRegressor':fs_estimator_hyperparams:dict={'epsilon':random.uniform(a=1.0,b=10.0),'max_iter':random.randint(a=20,b=200),'alpha':10**random.uniform(a=-8,b=0),'warm_start':random.choice(seq=[True,False]),'fit_intercept':random.choice(seq=[True,False]),'tol':10**random.uniform(a=-8,b=-2)};
                         elif fs_estimator_type=='QuantileRegressor':
-                            fs_estimator_hyperparams={'quantile':random.uniform(a=0.0,b=1.0),'alpha':10**random.uniform(a=-4,b=2),'fit_intercept':random.choice(seq=[True,False]),'solver':random.choice(seq=['highs-ds','highs-ipm','highs','interior-point','revised simplex'])};
+                            fs_estimator_hyperparams:dict={'quantile':random.uniform(a=0.0,b=1.0),'alpha':10**random.uniform(a=-4,b=2),'fit_intercept':random.choice(seq=[True,False]),'solver':random.choice(seq=['highs-ds','highs-ipm','highs','interior-point','revised simplex'])};
                             #Solver interior-point is not anymore available in SciPy >= 1.11.0
                             if fs_estimator_hyperparams['solver']=='interior-point':fs_estimator_hyperparams['solver']=random.choice(seq=['highs-ds','highs-ipm','highs','revised simplex']);
-                        elif fs_estimator_type=='RANSACRegressor':fs_estimator_hyperparams={'min_samples':random.uniform(a=0.0,b=1.0),'max_trials':random.randint(a=50,b=150),'max_skips':random.randint(a=500,b=1000),'stop_n_inliers':random.randint(a=500,b=1000),'stop_score':10**random.uniform(a=3,b=10),'stop_probability':random.uniform(a=0.95,b=1.00),'loss':random.choice(seq=['absolute_error','squared_error']),'random_state':hyperparam_random_state};
-                        elif fs_estimator_type=='TheilSenRegressor':fs_estimator_hyperparams={'fit_intercept':random.choice(seq=[True,False]),'max_subpopulation':10**random.uniform(a=-6,b=-2),'n_subsamples':random.randint(a=opened_data.shape[1]+1,b=opened_data.shape[0]),'max_iter':random.randint(a=100,b=500),'tol':10**random.uniform(a=-5,b=-1),'n_jobs':n_cpu_cores,'random_state':hyperparam_random_state};
-                        elif fs_estimator_type=='GammaRegressor':fs_estimator_hyperparams={'alpha':10**random.uniform(a=-4,b=2),'fit_intercept':random.choice(seq=[True,False]),'solver':random.choice(seq=['lbfgs','newton-cholesky']),'max_iter':random.randint(a=20,b=200),'tol':10**random.uniform(a=-9,b=-2),'warm_start':random.choice(seq=[True,False])};
-                        elif fs_estimator_type=='PoissonRegressor':fs_estimator_hyperparams={'alpha':10**random.uniform(a=-4,b=2),'fit_intercept':random.choice(seq=[True,False]),'solver':random.choice(seq=['lbfgs','newton-cholesky']),'max_iter':random.randint(a=20,b=200),'tol':10**random.uniform(a=-6,b=-2),'warm_start':random.choice(seq=[True,False])};
-                        elif fs_estimator_type=='TweedieRegressor':fs_estimator_hyperparams={'power':random.choice(seq=[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.01,1.02,1.03,1.04,1.05,1.1,1.15,1.2,1.25,1.3,1.35,1.4,1.45,1.5,1.55,1.6,1.65,1.7,1.75,1.8,1.85,1.9,1.95,1.96,1.97,1.98,1.99,2.0,2.0,2.0,2.0,2.0,2.0,2.0,2.0,2.0,2.0,2.0,2.0,2.0,2.0,2.0,2.0,2.0,2.0,2.0,2.0,2.0,3.0,3.0,3.0,3.0,3.0,3.0,3.0,3.0,3.0,3.0,3.0,3.0,3.0,3.0,3.0,3.0,3.0,3.0,3.0,3.0,3.0]),'alpha':10**random.uniform(a=-4,b=2),'fit_intercept':random.choice(seq=[True,False]),'link':random.choice(seq=['auto','identity','log']),'solver':random.choice(seq=['lbfgs','newton-cholesky']),'max_iter':random.randint(a=20,b=200),'tol':10**random.uniform(a=-6,b=-2),'warm_start':random.choice(seq=[True,False])};
-                        elif fs_estimator_type=='PassiveAggressiveRegressor':fs_estimator_hyperparams={'C':10**random.uniform(a=-4,b=2),'fit_intercept':random.choice(seq=[True,False]),'max_iter':random.randint(a=100,b=2000),'tol':10**random.uniform(a=-5,b=-1),'early_stopping':random.choice(seq=[True,False]),'validation_fraction':random.uniform(a=0.0,b=0.9),'n_iter_no_change':random.randint(a=2,b=10),'loss':random.choice(seq=['epsilon_insensitive','squared_epsilon_insensitive']),'epsilon':random.uniform(a=0.05,b=0.15),'warm_start':random.choice(seq=[True,False]),'average':random.choice(seq=[False,False,False,False,False,False,False,False,False,False,False,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30]),'random_state':hyperparam_random_state};
-                        elif fs_estimator_type=='LinearSVC':fs_estimator_hyperparams={'penalty':random.choice(seq=['l1','l2']),'loss':random.choice(seq=['hinge','squared_hinge']),'dual':random.choice(seq=['auto',True,False]),'tol':10**random.uniform(a=-6,b=-2),'C':10**random.uniform(a=-2,b=2),'fit_intercept':random.choice(seq=[True,False]),'intercept_scaling':10**random.uniform(a=-2,b=2),'random_state':hyperparam_random_state,'max_iter':random.randint(a=500,b=5000)};
-                        elif fs_estimator_type=='NuSVC':fs_estimator_hyperparams={'nu':random.uniform(a=0.0,b=1.0),'kernel':random.choice(seq=['linear','poly','rbf','sigmoid','precomputed']),'degree':random.randint(a=0,b=5),'gamma':random.choice(seq=['auto','scale',random.uniform(a=0.0,b=0.1)]),'shrinking':random.choice(seq=[True,False]),'probability':random.choice(seq=[True,False]),'tol':10**random.uniform(a=-4,b=-2),'class_weight':random.choice(seq=['balanced',None]),'max_iter':random.randint(a=500,b=2000),'decision_function_shape':random.choice(seq=['ovo','ovr']),'break_ties':random.choice(seq=[True,False]),'random_state':hyperparam_random_state};
-                        elif fs_estimator_type=='SVC':fs_estimator_hyperparams={'C':10**random.uniform(a=-2,b=2),'kernel':random.choice(seq=['linear','poly','rbf','sigmoid','precomputed']),'degree':random.randint(a=0,b=5),'gamma':random.choice(seq=['auto','scale',random.uniform(a=0.0,b=0.1)]),'shrinking':random.choice(seq=[True,False]),'probability':random.choice(seq=[True,False]),'tol':10**random.uniform(a=-4,b=-2),'class_weight':random.choice(seq=['balanced',None]),'max_iter':random.randint(a=500,b=2000),'decision_function_shape':random.choice(seq=['ovo','ovr']),'break_ties':random.choice(seq=[True,False]),'random_state':hyperparam_random_state};
-                        elif fs_estimator_type=='LinearSVR':fs_estimator_hyperparams={'epsilon':0.0,'tol':10**random.uniform(a=-6,b=-2),'C':10**random.uniform(a=-2,b=2),'loss':random.choice(seq=['epsilon_insensitive','squared_epsilon_insensitive']),'fit_intercept':random.choice(seq=[True,False]),'intercept_scaling':10**random.uniform(a=-2,b=2),'dual':random.choice(seq=['auto',True,False]),'random_state':hyperparam_random_state,'max_iter':random.randint(a=500,b=5000)};
-                        elif fs_estimator_type=='NuSVR':fs_estimator_hyperparams={'nu':random.uniform(a=0.0,b=1.0),'C':10**random.uniform(a=-2,b=2),'kernel':random.choice(seq=['linear','poly','rbf','sigmoid','precomputed']),'degree':random.randint(a=0,b=5),'gamma':random.choice(seq=['auto','scale',random.uniform(a=0.0,b=0.1)]),'shrinking':random.choice(seq=[True,False]),'tol':10**random.uniform(a=-4,b=-2),'max_iter':random.randint(a=500,b=5000)};
-                        elif fs_estimator_type=='SVR':fs_estimator_hyperparams={'kernel':random.choice(seq=['linear','poly','rbf','sigmoid','precomputed']),'degree':random.randint(a=0,b=5),'gamma':random.choice(seq=['auto','scale',random.uniform(a=0.0,b=0.1)]),'tol':10**random.uniform(a=-4,b=-2),'C':10**random.uniform(a=-2,b=2),'epsilon':random.uniform(a=0.05,b=0.15),'shrinking':random.choice(seq=[True,False]),'max_iter':random.randint(a=500,b=5000)};
+                        elif fs_estimator_type=='RANSACRegressor':fs_estimator_hyperparams:dict={'min_samples':random.uniform(a=0.0,b=1.0),'max_trials':random.randint(a=50,b=150),'max_skips':random.randint(a=500,b=1000),'stop_n_inliers':random.randint(a=500,b=1000),'stop_score':10**random.uniform(a=3,b=10),'stop_probability':random.uniform(a=0.95,b=1.00),'loss':random.choice(seq=['absolute_error','squared_error']),'random_state':hyperparam_random_state};
+                        elif fs_estimator_type=='TheilSenRegressor':fs_estimator_hyperparams:dict={'fit_intercept':random.choice(seq=[True,False]),'max_subpopulation':10**random.uniform(a=-6,b=-2),'n_subsamples':random.randint(a=opened_data.shape[1]+1,b=opened_data.shape[0]),'max_iter':random.randint(a=100,b=500),'tol':10**random.uniform(a=-5,b=-1),'n_jobs':-1,'random_state':hyperparam_random_state};
+                        elif fs_estimator_type=='GammaRegressor':fs_estimator_hyperparams:dict={'alpha':10**random.uniform(a=-4,b=2),'fit_intercept':random.choice(seq=[True,False]),'solver':random.choice(seq=['lbfgs','newton-cholesky']),'max_iter':random.randint(a=20,b=200),'tol':10**random.uniform(a=-9,b=-2),'warm_start':random.choice(seq=[True,False])};
+                        elif fs_estimator_type=='PoissonRegressor':fs_estimator_hyperparams:dict={'alpha':10**random.uniform(a=-4,b=2),'fit_intercept':random.choice(seq=[True,False]),'solver':random.choice(seq=['lbfgs','newton-cholesky']),'max_iter':random.randint(a=20,b=200),'tol':10**random.uniform(a=-6,b=-2),'warm_start':random.choice(seq=[True,False])};
+                        elif fs_estimator_type=='TweedieRegressor':fs_estimator_hyperparams:dict={'power':random.choice(seq=[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.01,1.02,1.03,1.04,1.05,1.1,1.15,1.2,1.25,1.3,1.35,1.4,1.45,1.5,1.55,1.6,1.65,1.7,1.75,1.8,1.85,1.9,1.95,1.96,1.97,1.98,1.99,2.0,2.0,2.0,2.0,2.0,2.0,2.0,2.0,2.0,2.0,2.0,2.0,2.0,2.0,2.0,2.0,2.0,2.0,2.0,2.0,2.0,3.0,3.0,3.0,3.0,3.0,3.0,3.0,3.0,3.0,3.0,3.0,3.0,3.0,3.0,3.0,3.0,3.0,3.0,3.0,3.0,3.0]),'alpha':10**random.uniform(a=-4,b=2),'fit_intercept':random.choice(seq=[True,False]),'link':random.choice(seq=['auto','identity','log']),'solver':random.choice(seq=['lbfgs','newton-cholesky']),'max_iter':random.randint(a=20,b=200),'tol':10**random.uniform(a=-6,b=-2),'warm_start':random.choice(seq=[True,False])};
+                        elif fs_estimator_type=='PassiveAggressiveRegressor':fs_estimator_hyperparams:dict={'C':10**random.uniform(a=-4,b=2),'fit_intercept':random.choice(seq=[True,False]),'max_iter':random.randint(a=100,b=2000),'tol':10**random.uniform(a=-5,b=-1),'early_stopping':random.choice(seq=[True,False]),'validation_fraction':random.uniform(a=0.0,b=0.9),'n_iter_no_change':random.randint(a=2,b=10),'loss':random.choice(seq=['epsilon_insensitive','squared_epsilon_insensitive']),'epsilon':random.uniform(a=0.05,b=0.15),'warm_start':random.choice(seq=[True,False]),'average':random.choice(seq=[False,False,False,False,False,False,False,False,False,False,False,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30]),'random_state':hyperparam_random_state};
+                        elif fs_estimator_type=='LinearSVC':fs_estimator_hyperparams:dict={'penalty':random.choice(seq=['l1','l2']),'loss':random.choice(seq=['hinge','squared_hinge']),'dual':random.choice(seq=['auto',True,False]),'tol':10**random.uniform(a=-6,b=-2),'C':10**random.uniform(a=-2,b=2),'fit_intercept':random.choice(seq=[True,False]),'intercept_scaling':10**random.uniform(a=-2,b=2),'random_state':hyperparam_random_state,'max_iter':random.randint(a=500,b=5000)};
+                        elif fs_estimator_type=='NuSVC':fs_estimator_hyperparams:dict={'nu':random.uniform(a=0.0,b=1.0),'kernel':random.choice(seq=['linear','poly','rbf','sigmoid','precomputed']),'degree':random.randint(a=0,b=5),'gamma':random.choice(seq=['auto','scale',random.uniform(a=0.0,b=0.1)]),'shrinking':random.choice(seq=[True,False]),'probability':random.choice(seq=[True,False]),'tol':10**random.uniform(a=-4,b=-2),'class_weight':random.choice(seq=['balanced',None]),'max_iter':random.randint(a=500,b=2000),'decision_function_shape':random.choice(seq=['ovo','ovr']),'break_ties':random.choice(seq=[True,False]),'random_state':hyperparam_random_state};
+                        elif fs_estimator_type=='SVC':fs_estimator_hyperparams:dict={'C':10**random.uniform(a=-2,b=2),'kernel':random.choice(seq=['linear','poly','rbf','sigmoid','precomputed']),'degree':random.randint(a=0,b=5),'gamma':random.choice(seq=['auto','scale',random.uniform(a=0.0,b=0.1)]),'shrinking':random.choice(seq=[True,False]),'probability':random.choice(seq=[True,False]),'tol':10**random.uniform(a=-4,b=-2),'class_weight':random.choice(seq=['balanced',None]),'max_iter':random.randint(a=500,b=2000),'decision_function_shape':random.choice(seq=['ovo','ovr']),'break_ties':random.choice(seq=[True,False]),'random_state':hyperparam_random_state};
+                        elif fs_estimator_type=='LinearSVR':fs_estimator_hyperparams:dict={'epsilon':0.0,'tol':10**random.uniform(a=-6,b=-2),'C':10**random.uniform(a=-2,b=2),'loss':random.choice(seq=['epsilon_insensitive','squared_epsilon_insensitive']),'fit_intercept':random.choice(seq=[True,False]),'intercept_scaling':10**random.uniform(a=-2,b=2),'dual':random.choice(seq=['auto',True,False]),'random_state':hyperparam_random_state,'max_iter':random.randint(a=500,b=5000)};
+                        elif fs_estimator_type=='NuSVR':fs_estimator_hyperparams:dict={'nu':random.uniform(a=0.0,b=1.0),'C':10**random.uniform(a=-2,b=2),'kernel':random.choice(seq=['linear','poly','rbf','sigmoid','precomputed']),'degree':random.randint(a=0,b=5),'gamma':random.choice(seq=['auto','scale',random.uniform(a=0.0,b=0.1)]),'shrinking':random.choice(seq=[True,False]),'tol':10**random.uniform(a=-4,b=-2),'max_iter':random.randint(a=500,b=5000)};
+                        elif fs_estimator_type=='SVR':fs_estimator_hyperparams:dict={'kernel':random.choice(seq=['linear','poly','rbf','sigmoid','precomputed']),'degree':random.randint(a=0,b=5),'gamma':random.choice(seq=['auto','scale',random.uniform(a=0.0,b=0.1)]),'tol':10**random.uniform(a=-4,b=-2),'C':10**random.uniform(a=-2,b=2),'epsilon':random.uniform(a=0.05,b=0.15),'shrinking':random.choice(seq=[True,False]),'max_iter':random.randint(a=500,b=5000)};
 
             if feature_selector_type=='GenericUnivariateSelect':
                 feature_selector_hyperparams={'mode':random.choice(seq=['percentile','k_best','fpr','fdr','fwe'])};
@@ -624,29 +617,29 @@ def run_one_pipeline_experiment_v1(num_features_select_from_all_min:int=5,num_fe
                 #В итоге переменная score_func_hyperparams не используется, так как в score_func передаётся именно функция, а не результат
                 #вызова функции с некоторым набором параметров
                 if fs_score_func_type=='f_classif':score_func_hyperparams:dict={};
-                elif fs_score_func_type=='mutual_info_classif':score_func_hyperparams:dict={'discrete_features':random.choice(seq=['auto',True,False]),'n_neighbors':random.randint(a=1,b=5),'random_state':score_func_random_state,'n_jobs':n_cpu_cores};
+                elif fs_score_func_type=='mutual_info_classif':score_func_hyperparams:dict={'discrete_features':random.choice(seq=['auto',True,False]),'n_neighbors':random.randint(a=1,b=5),'random_state':score_func_random_state,'n_jobs':-1};
                 elif fs_score_func_type=='chi2':score_func_hyperparams:dict={};
                 elif fs_score_func_type=='f_regression':score_func_hyperparams:dict={'center':random.choice(seq=[True,False]),'force_finite':random.choice(seq=[True,False])};
-                elif fs_score_func_type=='mutual_info_regression':score_func_hyperparams:dict={'discrete_features':random.choice(seq=['auto',True,False]),'n_neighbors':random.randint(a=1,b=5),'random_state':score_func_random_state,'n_jobs':n_cpu_cores};
+                elif fs_score_func_type=='mutual_info_regression':score_func_hyperparams:dict={'discrete_features':random.choice(seq=['auto',True,False]),'n_neighbors':random.randint(a=1,b=5),'random_state':score_func_random_state,'n_jobs':-1};
             #Если feature_selector_type - это один из RFE,RFECV,SelectFromModel,SequentialFeatureSelector, то для него нужна отдельная
             #модель (estimator), по которой определяется важность признаков. Пока что все эти случаи закрыты заглушками (то есть просто
             #считаем, что feature_selector не используется)
             elif feature_selector_type=='RFE':#estimator будем использовать уже отдельно для cross_valid, final_test и production
-                feature_selector_hyperparams={'n_features_to_select':random.uniform(a=0.1,b=0.9),'step':random.randint(a=1,b=2),'importance_getter':'auto'};
+                feature_selector_hyperparams:dict={'n_features_to_select':random.uniform(a=0.1,b=0.9),'step':random.randint(a=1,b=2),'importance_getter':'auto'};
             elif feature_selector_type=='RFECV':#estimator будем использовать уже отдельно для cross_valid, final_test и production
-                feature_selector_hyperparams={'step':random.randint(a=1,b=2),'min_features_to_select':random.randint(a=1,b=10),'cv':random.randint(a=3,b=15),'scoring':None,'n_jobs':n_cpu_cores,'importance_getter':'auto'};
+                feature_selector_hyperparams:dict={'step':random.randint(a=1,b=2),'min_features_to_select':random.randint(a=1,b=10),'cv':random.randint(a=3,b=15),'scoring':None,'n_jobs':-1,'importance_getter':'auto'};
             elif feature_selector_type in ['SelectFdr','SelectFpr','SelectFwe']:
                 feature_selector_hyperparams={'alpha':10.0**random.uniform(a=-4.0,b=-0.1)};
                 if problem_type=='classification':score_func_types:list[str]=['f_classif','mutual_info_classif','chi2'];
                 elif problem_type=='regression':score_func_types:list[str]=['f_regression','mutual_info_regression'];
                 fs_score_func_type:str=random.choice(seq=score_func_types);
                 if fs_score_func_type=='f_classif':score_func_hyperparams:dict={};
-                elif fs_score_func_type=='mutual_info_classif':score_func_hyperparams:dict={'discrete_features':random.choice(seq=['auto',True,False]),'n_neighbors':random.randint(a=1,b=5),'random_state':score_func_random_state,'n_jobs':n_cpu_cores};
+                elif fs_score_func_type=='mutual_info_classif':score_func_hyperparams:dict={'discrete_features':random.choice(seq=['auto',True,False]),'n_neighbors':random.randint(a=1,b=5),'random_state':score_func_random_state,'n_jobs':-1};
                 elif fs_score_func_type=='chi2':score_func_hyperparams:dict={};
                 elif fs_score_func_type=='f_regression':score_func_hyperparams:dict={'center':random.choice(seq=[True,False]),'force_finite':random.choice(seq=[True,False])};
-                elif fs_score_func_type=='mutual_info_regression':score_func_hyperparams:dict={'discrete_features':random.choice(seq=['auto',True,False]),'n_neighbors':random.randint(a=1,b=5),'random_state':score_func_random_state,'n_jobs':n_cpu_cores};
+                elif fs_score_func_type=='mutual_info_regression':score_func_hyperparams:dict={'discrete_features':random.choice(seq=['auto',True,False]),'n_neighbors':random.randint(a=1,b=5),'random_state':score_func_random_state,'n_jobs':-1};
             elif feature_selector_type=='SelectFromModel':#estimator будем использовать уже отдельно для cross_valid, final_test и production
-                feature_selector_hyperparams={'threshold':None,'prefit':False,'norm_order':random.randint(a=1,b=3),'max_features':random.randint(a=50,b=150),'importance_getter':'auto'};
+                feature_selector_hyperparams:dict={'threshold':None,'prefit':False,'norm_order':random.randint(a=1,b=3),'max_features':random.randint(a=50,b=150),'importance_getter':'auto'};
             elif feature_selector_type=='SelectKBest':
                 feature_selector_hyperparams={'k':random.randint(a=10,b=100)};
                 if feature_selector_hyperparams['k']>n_features_selected_randomly:feature_selector_hyperparams['k']=n_features_selected_randomly;
@@ -656,10 +649,10 @@ def run_one_pipeline_experiment_v1(num_features_select_from_all_min:int=5,num_fe
                     score_func_types:list[str]=['f_regression','mutual_info_regression'];
                 fs_score_func_type:str=random.choice(seq=score_func_types);
                 if fs_score_func_type=='f_classif':score_func_hyperparams:dict={};
-                elif fs_score_func_type=='mutual_info_classif':score_func_hyperparams:dict={'discrete_features':random.choice(seq=['auto',True,False]),'n_neighbors':random.randint(a=1,b=5),'random_state':score_func_random_state,'n_jobs':n_cpu_cores};
+                elif fs_score_func_type=='mutual_info_classif':score_func_hyperparams:dict={'discrete_features':random.choice(seq=['auto',True,False]),'n_neighbors':random.randint(a=1,b=5),'random_state':score_func_random_state,'n_jobs':-1};
                 elif fs_score_func_type=='chi2':score_func_hyperparams:dict={};
                 elif fs_score_func_type=='f_regression':score_func_hyperparams:dict={'center':random.choice(seq=[True,False]),'force_finite':random.choice(seq=[True,False])};
-                elif fs_score_func_type=='mutual_info_regression':score_func_hyperparams:dict={'discrete_features':random.choice(seq=['auto',True,False]),'n_neighbors':random.randint(a=1,b=5),'random_state':score_func_random_state,'n_jobs':n_cpu_cores};
+                elif fs_score_func_type=='mutual_info_regression':score_func_hyperparams:dict={'discrete_features':random.choice(seq=['auto',True,False]),'n_neighbors':random.randint(a=1,b=5),'random_state':score_func_random_state,'n_jobs':-1};
             elif feature_selector_type=='SelectPercentile':
                 feature_selector_hyperparams={'percentile':random.randint(a=10,b=100)};
                 if problem_type=='classification':
@@ -668,12 +661,12 @@ def run_one_pipeline_experiment_v1(num_features_select_from_all_min:int=5,num_fe
                     score_func_types:list[str]=['f_regression','mutual_info_regression'];
                 fs_score_func_type:str=random.choice(seq=score_func_types);
                 if fs_score_func_type=='f_classif':score_func_hyperparams:dict={};
-                elif fs_score_func_type=='mutual_info_classif':score_func_hyperparams:dict={'discrete_features':random.choice(seq=['auto',True,False]),'n_neighbors':random.randint(a=1,b=5),'random_state':score_func_random_state,'n_jobs':n_cpu_cores};
+                elif fs_score_func_type=='mutual_info_classif':score_func_hyperparams:dict={'discrete_features':random.choice(seq=['auto',True,False]),'n_neighbors':random.randint(a=1,b=5),'random_state':score_func_random_state,'n_jobs':-1};
                 elif fs_score_func_type=='chi2':score_func_hyperparams:dict={};
                 elif fs_score_func_type=='f_regression':score_func_hyperparams:dict={'center':random.choice(seq=[True,False]),'force_finite':random.choice(seq=[True,False])};
-                elif fs_score_func_type=='mutual_info_regression':score_func_hyperparams:dict={'discrete_features':random.choice(seq=['auto',True,False]),'n_neighbors':random.randint(a=1,b=5),'random_state':score_func_random_state,'n_jobs':n_cpu_cores};
+                elif fs_score_func_type=='mutual_info_regression':score_func_hyperparams:dict={'discrete_features':random.choice(seq=['auto',True,False]),'n_neighbors':random.randint(a=1,b=5),'random_state':score_func_random_state,'n_jobs':-1};
             elif feature_selector_type=='SequentialFeatureSelector':#estimator будем использовать уже отдельно для cross_valid, final_test и production
-                feature_selector_hyperparams={'n_features_to_select':random.uniform(a=0.1,b=0.9),'tol':10**random.uniform(a=-2,b=0),'direction':random.choice(seq=['forward','backward']),'scoring':None,'cv':random.randint(a=3,b=15),'n_jobs':n_cpu_cores};
+                feature_selector_hyperparams:dict={'n_features_to_select':random.uniform(a=0.1,b=0.9),'tol':10**random.uniform(a=-2,b=0),'direction':random.choice(seq=['forward','backward']),'scoring':None,'cv':random.randint(a=3,b=15),'n_jobs':-1};
     else:
         print(f'Выбрано use_feature_selector==False, feature_selector не применяется');
         feature_selector_hyperparams=None;
@@ -683,44 +676,30 @@ def run_one_pipeline_experiment_v1(num_features_select_from_all_min:int=5,num_fe
     if problem_type=='classification':
         if model_type is None:
             #Выбор случайной модели из списка:
-            model_types:list[str]=['AdaBoostClassifier','BaggingClassifier','ExtraTreesClassifier','GradientBoostingClassifier','HistGradientBoostingClassifier','RandomForestClassifier','XGBClassifier','LGBMClassifier','LogisticRegression','PassiveAggressiveClassifier','Perceptron','RidgeClassifier','SGDClassifier','XGBRFClassifier','DaskLGBMClassifier','GaussianProcessClassifier','BernoulliNB','ComplementNB','GaussianNB','MultinomialNB','KNeighborsClassifier','NearestCentroid','RadiusNeighborsClassifier','MLPClassifier'];
-            if prefered_model_types is not None:model_types=list(set(model_types).intersection(set(prefered_model_types)));
+            model_types:list[str]=['AdaBoostClassifier','BaggingClassifier','ExtraTreesClassifier','GradientBoostingClassifier','HistGradientBoostingClassifier','RandomForestClassifier','XGBClassifier','LGBMClassifier','LogisticRegression','PassiveAggressiveClassifier','Perceptron','RidgeClassifier','SGDClassifier'];
             model_type:str=random.choice(seq=model_types);
         if model_hyperparams is None:
-            model_hyperparams:dict[str,int|float|bool|str|tuple[int]];
             if model_type=='AdaBoostClassifier':model_hyperparams={'n_estimators':random.randint(a=20,b=500),'learning_rate':10**random.uniform(a=-2,b=0.5),'random_state':hyperparam_random_state};
-            elif model_type=='BaggingClassifier':model_hyperparams={'n_estimators':random.randint(a=20,b=500),'max_samples':random.uniform(a=0.5,b=0.9),'max_features':random.uniform(a=0.5,b=0.9),'bootstrap':bool(random.randint(a=0,b=1)),'bootstrap_features':bool(random.randint(a=0,b=1)),'oob_score':bool(random.randint(a=0,b=1)),'warm_start':bool(random.randint(a=0,b=1)),'random_state':hyperparam_random_state,'n_jobs':n_cpu_cores};
-            elif model_type=='ExtraTreesClassifier':model_hyperparams={'n_estimators':random.randint(a=20,b=500),'criterion':random.choice(seq=['gini','entropy','log_loss']),'max_depth':random.randint(a=5,b=50),'min_samples_split':random.randint(a=1,b=10),'min_samples_leaf':random.randint(a=1,b=10),'min_weight_fraction_leaf':random.uniform(a=0.0,b=0.5),'max_features':random.choice(seq=['sqrt','log2',None]),'max_leaf_nodes':random.randint(a=5,b=50),'min_impurity_decrease':random.uniform(a=0.0,b=0.1),'bootstrap':bool(random.randint(a=0,b=1)),'oob_score':bool(random.randint(a=0,b=1)),'warm_start':bool(random.randint(a=0,b=1)),'class_weight':random.choice(seq=['balanced','balanced_subsample',None]),'ccp_alpha':random.uniform(a=0.0,b=0.1),'max_samples':random.uniform(a=0.001,b=1.0),'random_state':hyperparam_random_state,'n_jobs':n_cpu_cores};
+            elif model_type=='BaggingClassifier':model_hyperparams={'n_estimators':random.randint(a=20,b=500),'max_samples':random.uniform(a=0.5,b=0.9),'max_features':random.uniform(a=0.5,b=0.9),'bootstrap':bool(random.randint(a=0,b=1)),'bootstrap_features':bool(random.randint(a=0,b=1)),'oob_score':bool(random.randint(a=0,b=1)),'warm_start':bool(random.randint(a=0,b=1)),'random_state':hyperparam_random_state,'n_jobs':-1};
+            elif model_type=='ExtraTreesClassifier':model_hyperparams={'n_estimators':random.randint(a=20,b=500),'criterion':random.choice(seq=['gini','entropy','log_loss']),'max_depth':random.randint(a=5,b=50),'min_samples_split':random.randint(a=1,b=10),'min_samples_leaf':random.randint(a=1,b=10),'min_weight_fraction_leaf':random.uniform(a=0.0,b=0.5),'max_features':random.choice(seq=['sqrt','log2',None]),'max_leaf_nodes':random.randint(a=5,b=50),'min_impurity_decrease':random.uniform(a=0.0,b=0.1),'bootstrap':bool(random.randint(a=0,b=1)),'oob_score':bool(random.randint(a=0,b=1)),'warm_start':bool(random.randint(a=0,b=1)),'class_weight':random.choice(seq=['balanced','balanced_subsample',None]),'ccp_alpha':random.uniform(a=0.0,b=0.1),'max_samples':random.uniform(a=0.001,b=1.0),'random_state':hyperparam_random_state,'n_jobs':-1};
             elif model_type=='GradientBoostingClassifier':model_hyperparams={'loss':random.choice(seq=['log_loss','exponential']),'learning_rate':10**random.uniform(a=-5,b=2),'n_estimators':random.randint(a=20,b=500),'subsample':random.uniform(a=0.001,b=1.0),'criterion':random.choice(seq=['friedman_mse','squared_error']),'min_samples_split':random.randint(a=2,b=10),'min_samples_leaf':random.randint(a=1,b=50),'min_weight_fraction_leaf':random.uniform(a=0.0,b=0.5),'max_depth':random.randint(a=1,b=20),'min_impurity_decrease':random.uniform(a=0.0,b=1.0),'init':random.choice(seq=['zero',None]),'max_features':random.choice(seq=['sqrt','log2']),'max_leaf_nodes':random.randint(a=2,b=50),'warm_start':bool(random.randint(a=0,b=1)),'validation_fraction':random.uniform(a=0.00001,b=0.999999),'n_iter_no_change':random.randint(a=1,b=100),'tol':10**random.uniform(a=-8,b=-1),'ccp_alpha':random.uniform(a=0.0,b=0.1),'random_state':hyperparam_random_state};
             elif model_type=='HistGradientBoostingClassifier':model_hyperparams={'learning_rate':10**random.uniform(a=-4,b=0),'max_iter':random.randint(a=20,b=400),'max_leaf_nodes':random.randint(a=2,b=50),'max_depth':random.randint(a=2,b=40),'min_samples_leaf':random.randint(a=5,b=100),'l2_regularization':10**random.uniform(a=-10,b=0),'max_features':random.uniform(a=0.8,b=1.0),'max_bins':random.randint(a=10,b=255),'warm_start':random.choice(seq=[True,False]),'n_iter_no_change':random.randint(a=3,b=30),'tol':10**random.uniform(a=-10,b=-3),'random_state':hyperparam_random_state};
             elif model_type=='RandomForestClassifier':
-                model_hyperparams={'n_estimators':random.randint(a=10,b=500),'criterion':random.choice(seq=['gini','entropy','log_loss']),'max_depth':random.randint(a=2,b=50),'min_samples_split':random.randint(a=2,b=50),'min_samples_leaf':random.randint(a=1,b=5),'min_weight_fraction_leaf':random.uniform(a=0.0,b=0.2),'max_features':random.choice(seq=['sqrt','log2',None]),'max_leaf_nodes':random.randint(a=10,b=100),'min_impurity_decrease':random.uniform(a=0.0,b=0.1),'bootstrap':random.choice(seq=[True,False]),'oob_score':random.choice(seq=[True,False]),'warm_start':random.choice(seq=[True,False]),'ccp_alpha':random.uniform(a=0.0,b=0.2),'max_samples':random.uniform(a=0.00000001,b=1.0),'random_state':hyperparam_random_state,'n_jobs':n_cpu_cores};
+                model_hyperparams={'n_estimators':random.randint(a=10,b=500),'criterion':random.choice(seq=['gini','entropy','log_loss']),'max_depth':random.randint(a=2,b=50),'min_samples_split':random.randint(a=2,b=50),'min_samples_leaf':random.randint(a=1,b=5),'min_weight_fraction_leaf':random.uniform(a=0.0,b=0.2),'max_features':random.choice(seq=['sqrt','log2',None]),'max_leaf_nodes':random.randint(a=10,b=100),'min_impurity_decrease':random.uniform(a=0.0,b=0.1),'bootstrap':random.choice(seq=[True,False]),'oob_score':random.choice(seq=[True,False]),'warm_start':random.choice(seq=[True,False]),'ccp_alpha':random.uniform(a=0.0,b=0.2),'max_samples':random.uniform(a=0.00000001,b=1.0),'random_state':hyperparam_random_state,'n_jobs':-1};
                 #if model_hyperparams['bootstrap']==False:model_hyperparams['max_samples']=None;
-            elif model_type=='XGBClassifier':model_hyperparams={'n_estimators':random.randint(a=10,b=500),'max_depth':random.randint(a=2,b=40),'max_leaves':random.randint(a=0,b=50),'max_bin':random.randint(a=5,b=100),'grow_policy':random.choice(seq=['depthwise','lossguide']),'learning_rate':10**random.uniform(a=-9,b=-1),'booster':random.choice(seq=['gbtree','gblinear','dart']),'gamma':random.uniform(a=0.0,b=1.0),'min_child_weight':random.uniform(a=0.01,b=0.1),'max_delta_step':random.uniform(a=0.1,b=2.0),'subsample':random.uniform(a=0.01,b=0.99),'sampling_method':random.choice(seq=['uniform','gradient_based']),'colsample_bytree':random.uniform(a=0.5,b=0.99),'colsample_bylevel':random.uniform(a=0.5,b=0.99),'colsample_bynode':random.uniform(a=0.5,b=0.99),'reg_alpha':10**random.uniform(a=-12,b=0),'reg_lambda':10**random.uniform(a=-12,b=0),'num_parallel_tree':random.randint(a=5,b=50),'importance_type':random.choice(seq=['gain','weight','cover','total_gain','total_cover']),'random_state':hyperparam_random_state,'n_jobs':n_cpu_cores};
-            elif model_type=='LGBMClassifier':model_hyperparams={'num_leaves':random.randint(a=10,b=60),'max_depth':random.randint(4,40),'learning_rate':10**random.uniform(a=-4,b=1.5),'n_estimators':random.randint(a=20,b=500),'subsample_for_bin':random.randint(a=50_000,b=500_000),'min_child_weight':random.uniform(a=0.0001,b=0.01),'min_child_samples':random.randint(a=5,b=50),'reg_alpha':10**random.uniform(a=-12,b=0),'reg_lambda':10**random.uniform(a=-12,b=0),'random_state':hyperparam_random_state,'n_jobs':n_cpu_cores};
-            elif model_type=='LogisticRegression':model_hyperparams={'penalty':random.choice(seq=['l1','l2','elasticnet',None]),'dual':random.choice(seq=[True,False]),'tol':10**random.uniform(a=-8,b=0),'C':random.uniform(a=0.5,b=1.5),'fit_intercept':random.choice(seq=[True,False]),'solver':random.choice(seq=['lbfgs','liblinear','newton-cg','newton-cholesky','sag','saga']),'max_iter':random.randint(a=50,b=500),'warm_start':random.choice(seq=[True,False]),'l1_ratio':random.uniform(a=0.0,b=1.0),'random_state':hyperparam_random_state,'n_jobs':n_cpu_cores};
-            elif model_type=='PassiveAggressiveClassifier':model_hyperparams={'C':random.uniform(a=0.5,b=1.5),'fit_intercept':random.choice(seq=[True,False]),'max_iter':random.randint(a=100,b=3000),'tol':10**random.uniform(a=-7,b=1),'early_stopping':random.choice(seq=[True,False]),'validation_fraction':random.uniform(a=0.0,b=1.0),'n_iter_no_change':random.randint(a=3,b=10),'shuffle':random.choice(seq=[True,False]),'loss':random.choice(seq=['hinge','squared_hinge']),'warm_start':random.choice(seq=[True,False]),'average':random.choice(seq=[True,False,1,2,3,4,5,6,7,8,9,10]),'random_state':hyperparam_random_state,'n_jobs':n_cpu_cores};
-            elif model_type=='Perceptron':model_hyperparams={'penalty':random.choice(seq=['l1','l2','elasticnet',None]),'alpha':10**random.uniform(a=-12,b=0),'l1_ratio':random.uniform(a=0.0,b=1.0),'fit_intercept':random.choice(seq=[True,False]),'max_iter':random.randint(a=100,b=5000),'tol':10**random.uniform(a=-6,b=0),'shuffle':random.choice(seq=[True,False]),'early_stopping':random.choice(seq=[True,False]),'validation_fraction':random.uniform(a=0.0,b=1.0),'n_iter_no_change':random.randint(a=3,b=10),'warm_start':random.choice(seq=[True,False]),'random_state':hyperparam_random_state,'n_jobs':n_cpu_cores};
-            elif model_type=='RidgeClassifier':model_hyperparams={'alpha':10**random.uniform(a=-2,b=1),'fit_intercept':random.choice(seq=[True,False]),'max_iter':random.randint(a=100,b=5000),'tol':10**random.uniform(a=-8,b=0),'solver':random.choice(seq=['auto','svd','cholesky','lsqr','sparse_cg','sag','saga','lbfgs']),'positive':random.choice(seq=[True,False]),'random_state':hyperparam_random_state,'n_jobs':n_cpu_cores};
-            elif model_type=='SGDClassifier':model_hyperparams={'loss':random.choice(seq=['hinge','log_loss','modified_huber','squared_hinge','perceptron','squared_error','huber','epsilon_insensitive','squared_epsilon_insensitive']),'penalty':random.choice(seq=['l1','l2','elasticnet',None]),'alpha':10**random.uniform(a=-8,b=0),'l1_ratio':random.uniform(a=0.0,b=1.0),'fit_intercept':random.choice(seq=[True,False]),'max_iter':random.randint(a=100,b=5000),'tol':10**random.uniform(a=-6,b=0),'shuffle':random.choice(seq=[True,False]),'epsilon':10**random.uniform(a=-9,b=3),'learning_rate':random.choice(seq=['constant','optimal','invscaling','adaptive']),'eta0':10**random.uniform(a=-5,b=1),'power_t':random.uniform(a=-5,b=6),'early_stopping':random.choice(seq=[True,False]),'validation_fraction':random.uniform(a=0.0,b=1.0),'n_iter_no_change':random.randint(a=3,b=10),'warm_start':random.choice(seq=[True,False]),'average':random.choice(seq=[True,False,1,2,3,4,5,6,7,8,9,10]),'random_state':hyperparam_random_state,'n_jobs':n_cpu_cores};
-            elif model_type=='XGBRFClassifier':model_hyperparams={'n_estimators':random.randint(a=50,b=500),'max_depth':random.randint(a=5,b=15),'max_leaves':random.randint(a=10,b=100),'max_bin':random.randint(a=10,b=100),'grow_policy':random.choice(seq=['depthwise','lossguide']),'learning_rate':10**random.uniform(a=-5,b=2),'verbosity':0,'booster':random.choice(seq=['gbtree','gblinear','dart']),'tree_method':random.choice(seq=['auto','exact','approx','hist']),'n_jobs':n_cpu_cores,'gamma':random.uniform(a=0.0,b=0.05),'sampling_method':random.choice(seq=['uniform','gradient_based']),'reg_alpha':10**random.uniform(a=-3,b=1),'reg_lambda':10**random.uniform(a=-3,b=1),'random_state':hyperparam_random_state,'missing':random.choice(seq=[0.0,1.0,-1.0])};
-            elif model_type=='DaskLGBMClassifier':model_hyperparams={'boosting_type':random.choice(seq=['gbdt','dart','goss']),'num_leaves':random.randint(a=10,b=60),'max_depth':random.randint(a=5,b=20),'learning_rate':10**random.uniform(a=-3,b=0.5),'n_estimators':random.randint(a=30,b=500),'subsample_for_bin':random.randint(a=50000,b=500000),'min_split_gain':random.uniform(a=0.0,b=0.05),'min_child_weight':10**random.uniform(a=-3.5,b=-2.5),'min_child_samples':random.randint(a=5,b=50),'subsample':random.uniform(a=0.8,b=1.0),'colsample_bytree':random.uniform(a=0.8,b=1.0),'reg_alpha':10**random.uniform(a=-4,b=0),'reg_lambda':10**random.uniform(a=-4,b=0),'random_state':hyperparam_random_state,'n_jobs':n_cpu_cores,'importance_type':random.choice(seq=['split','gain'])};
-            elif model_type=='GaussianProcessClassifier':model_hyperparams={'max_iter_predict':random.randint(a=50,b=500),'warm_start':random.choice(seq=[True,False]),'random_state':hyperparam_random_state,'multi_class':random.choice(seq=['one_vs_rest','one_vs_one']),'n_jobs':n_cpu_cores};
-            elif model_type=='BernoulliNB':model_hyperparams={'alpha':10**random.uniform(a=-10,b=0),'force_alpha':random.choice(seq=[True,False]),'binarize':random.choice(seq=[0.0,0.01,0.02,0.05,0.1,0.2,0.5,1.0]),'fit_prior':true_with_prob(p=0.7)};
-            elif model_type=='ComplementNB':model_hyperparams={'alpha':10**random.uniform(a=-10,b=0),'force_alpha':random.choice(seq=[True,False]),'fit_prior':true_with_prob(p=0.7),'norm':true_with_prob(p=0.4)};
-            elif model_type=='GaussianNB':model_hyperparams={'var_smoothing':10**random.uniform(a=-11,b=-7)};
-            elif model_type=='MultinomialNB':model_hyperparams={'alpha':10**random.uniform(a=-10,b=0),'force_alpha':random.choice(seq=[True,False]),'fit_prior':true_with_prob(p=0.7)};
-            elif model_type=='KNeighborsClassifier':model_hyperparams={'n_neighbors':random.randint(a=1,b=15),'weights':random.choice(seq=['uniform','distance']),'algorithm':random.choice(seq=['auto','ball_tree','kd_tree','brute']),'leaf_size':random.randint(a=10,b=50),'p':random.uniform(a=1.0,b=5.0),'metric':random.choice(seq=['minkowski','cityblock','cosine','euclidean','haversine','l1','l2']),'n_jobs':n_cpu_cores};
-            elif model_type=='NearestCentroid':model_hyperparams={'metric':random.choice(seq=['euclidean','manhattan']),'priors':random.choice(seq=['uniform','empirical'])};
-            elif model_type=='RadiusNeighborsClassifier':model_hyperparams={'radius':10**random.uniform(a=-1.5,b=1.5),'weights':random.choice(seq=['uniform','distance']),'algorithm':random.choice(seq=['auto','ball_tree','kd_tree','brute']),'leaf_size':random.randint(a=10,b=50),'p':random.uniform(a=1.0,b=5.0),'metric':random.choice(seq=['minkowski','cityblock','cosine','euclidean','haversine','l1','l2']),'n_jobs':n_cpu_cores};
-            elif model_type=='MLPClassifier':model_hyperparams={'hidden_layer_sizes':generate_hidden_layer_sizes_tuple(n_layers=random.randint(a=1,b=5),n_in=n_features_selected_randomly,n_out=1,allow_increase=true_with_prob(p=0.1),log_scale=true_with_prob(p=0.85)),'activation':random.choice(seq=['logistic','tanh','relu','relu']),'solver':random.choice(seq=['lbfgs','sgd','adam']),'alpha':10**random.uniform(a=-6,b=-2),'learning_rate':random.choice(seq=['constant','invscaling','adaptive']),'learning_rate_init':10**random.uniform(a=-5,b=-1),'power_t':random.uniform(a=0.3,b=0.7),'max_iter':random.randint(a=100,b=1000),'shuffle':True,'random_state':hyperparam_random_state,'tol':10**random.uniform(a=-6,b=-2),'warm_start':random.choice(seq=[True,False]),'momentum':random.uniform(a=0.8,b=1.0),'nesterovs_momentum':random.choice(seq=[True,False]),'early_stopping':random.choice(seq=[True,False]),'validation_fraction':random.uniform(a=0.05,b=0.15),'beta_1':random.uniform(a=0.8,b=1.0),'beta_2':random.uniform(a=0.998,b=1.0),'epsilon':10**random.uniform(a=-10,b=-6),'n_iter_no_change':random.randint(a=1,b=20),'max_fun':random.randint(a=5000,b=35000)};
-
+            elif model_type=='XGBClassifier':model_hyperparams={'n_estimators':random.randint(a=10,b=500),'max_depth':random.randint(a=2,b=40),'max_leaves':random.randint(a=0,b=50),'max_bin':random.randint(a=5,b=100),'grow_policy':random.choice(seq=['depthwise','lossguide']),'learning_rate':10**random.uniform(a=-9,b=-1),'booster':random.choice(seq=['gbtree','gblinear','dart']),'gamma':random.uniform(a=0.0,b=1.0),'min_child_weight':random.uniform(a=0.01,b=0.1),'max_delta_step':random.uniform(a=0.1,b=2.0),'subsample':random.uniform(a=0.01,b=0.99),'sampling_method':random.choice(seq=['uniform','gradient_based']),'colsample_bytree':random.uniform(a=0.5,b=0.99),'colsample_bylevel':random.uniform(a=0.5,b=0.99),'colsample_bynode':random.uniform(a=0.5,b=0.99),'reg_alpha':10**random.uniform(a=-12,b=0),'reg_lambda':10**random.uniform(a=-12,b=0),'num_parallel_tree':random.randint(a=5,b=50),'importance_type':random.choice(seq=['gain','weight','cover','total_gain','total_cover']),'random_state':hyperparam_random_state,'n_jobs':-1};
+            elif model_type=='LGBMClassifier':model_hyperparams={'num_leaves':random.randint(a=10,b=60),'max_depth':random.randint(4,40),'learning_rate':10**random.uniform(a=-4,b=1.5),'n_estimators':random.randint(a=20,b=500),'subsample_for_bin':random.randint(a=50_000,b=500_000),'min_child_weight':random.uniform(a=0.0001,b=0.01),'min_child_samples':random.randint(a=5,b=50),'reg_alpha':10**random.uniform(a=-12,b=0),'reg_lambda':10**random.uniform(a=-12,b=0),'random_state':hyperparam_random_state,'n_jobs':-1};
+            elif model_type=='LogisticRegression':model_hyperparams={'penalty':random.choice(seq=['l1','l2','elasticnet',None]),'dual':random.choice(seq=[True,False]),'tol':10**random.uniform(a=-8,b=0),'C':random.uniform(a=0.5,b=1.5),'fit_intercept':random.choice(seq=[True,False]),'solver':random.choice(seq=['lbfgs','liblinear','newton-cg','newton-cholesky','sag','saga']),'max_iter':random.randint(a=50,b=500),'warm_start':random.choice(seq=[True,False]),'l1_ratio':random.uniform(a=0.0,b=1.0),'random_state':hyperparam_random_state,'n_jobs':-1};
+            elif model_type=='PassiveAggressiveClassifier':model_hyperparams={'C':random.uniform(a=0.5,b=1.5),'fit_intercept':random.choice(seq=[True,False]),'max_iter':random.randint(a=100,b=3000),'tol':10**random.uniform(a=-7,b=1),'early_stopping':random.choice(seq=[True,False]),'validation_fraction':random.uniform(a=0.0,b=1.0),'n_iter_no_change':random.randint(a=3,b=10),'shuffle':random.choice(seq=[True,False]),'loss':random.choice(seq=['hinge','squared_hinge']),'warm_start':random.choice(seq=[True,False]),'average':random.choice(seq=[True,False,1,2,3,4,5,6,7,8,9,10]),'random_state':hyperparam_random_state,'n_jobs':-1};
+            elif model_type=='Perceptron':model_hyperparams={'penalty':random.choice(seq=['l1','l2','elasticnet',None]),'alpha':10**random.uniform(a=-12,b=0),'l1_ratio':random.uniform(a=0.0,b=1.0),'fit_intercept':random.choice(seq=[True,False]),'max_iter':random.randint(a=100,b=5000),'tol':10**random.uniform(a=-6,b=0),'shuffle':random.choice(seq=[True,False]),'early_stopping':random.choice(seq=[True,False]),'validation_fraction':random.uniform(a=0.0,b=1.0),'n_iter_no_change':random.randint(a=3,b=10),'warm_start':random.choice(seq=[True,False]),'random_state':hyperparam_random_state,'n_jobs':-1};
+            elif model_type=='RidgeClassifier':model_hyperparams={'alpha':10**random.uniform(a=-2,b=1),'fit_intercept':random.choice(seq=[True,False]),'max_iter':random.randint(a=100,b=5000),'tol':10**random.uniform(a=-8,b=0),'solver':random.choice(seq=['auto','svd','cholesky','lsqr','sparse_cg','sag','saga','lbfgs']),'positive':random.choice(seq=[True,False]),'random_state':hyperparam_random_state,'n_jobs':-1};
+            elif model_type=='SGDClassifier':model_hyperparams={'loss':random.choice(seq=['hinge','log_loss','modified_huber','squared_hinge','perceptron','squared_error','huber','epsilon_insensitive','squared_epsilon_insensitive']),'penalty':random.choice(seq=['l1','l2','elasticnet',None]),'alpha':10**random.uniform(a=-8,b=0),'l1_ratio':random.uniform(a=0.0,b=1.0),'fit_intercept':random.choice(seq=[True,False]),'max_iter':random.randint(a=100,b=5000),'tol':10**random.uniform(a=-6,b=0),'shuffle':random.choice(seq=[True,False]),'epsilon':10**random.uniform(a=-9,b=3),'learning_rate':random.choice(seq=['constant','optimal','invscaling','adaptive']),'eta0':10**random.uniform(a=-5,b=1),'power_t':random.uniform(a=-5,b=6),'early_stopping':random.choice(seq=[True,False]),'validation_fraction':random.uniform(a=0.0,b=1.0),'n_iter_no_change':random.randint(a=3,b=10),'warm_start':random.choice(seq=[True,False]),'average':random.choice(seq=[True,False,1,2,3,4,5,6,7,8,9,10]),'random_state':hyperparam_random_state,'n_jobs':-1};
     elif problem_type=='regression':
         if model_type is None:#Если тип модели не указан, то он выбирается случайно из списка model_types
             if task_output=='mono_output':
-                model_types:list[str]=['LinearRegression','Ridge','SGDRegressor','ElasticNet','Lars','Lasso','LassoLars','LassoLarsIC','ARDRegression','BayesianRidge','HuberRegressor','QuantileRegressor','RANSACRegressor','TheilSenRegressor','GammaRegressor','PoissonRegressor','TweedieRegressor','PassiveAggressiveRegressor','AdaBoostRegressor','BaggingRegressor','ExtraTreesRegressor','GradientBoostingRegressor','HistGradientBoostingRegressor','RandomForestRegressor','XGBRegressor','XGBRFRegressor','LGBMRegressor','DaskLGBMRegressor','GaussianProcessRegressor','KNeighborsRegressor','RadiusNeighborsRegressor','MLPRegressor'];
+                model_types:list[str]=['LinearRegression','Ridge','SGDRegressor','ElasticNet','Lars','Lasso','LassoLars','LassoLarsIC','ARDRegression','BayesianRidge','HuberRegressor','QuantileRegressor','RANSACRegressor','TheilSenRegressor','GammaRegressor','PoissonRegressor','TweedieRegressor','PassiveAggressiveRegressor','AdaBoostRegressor','BaggingRegressor','ExtraTreesRegressor','GradientBoostingRegressor','HistGradientBoostingRegressor','RandomForestRegressor'];
             elif task_output=='multi_output':
-                model_types:list[str]=['LinearRegression','Ridge','SGDRegressor','ElasticNet','Lars','Lasso','LassoLars','LassoLarsIC','ARDRegression','BayesianRidge','MultiTaskElasticNet','MultiTaskLasso','HuberRegressor','QuantileRegressor','RANSACRegressor','TheilSenRegressor','GammaRegressor','PoissonRegressor','TweedieRegressor','PassiveAggressiveRegressor','AdaBoostRegressor','BaggingRegressor','ExtraTreesRegressor','GradientBoostingRegressor','HistGradientBoostingRegressor','RandomForestRegressor','MLPRegressor'];
+                model_types:list[str]=['LinearRegression','Ridge','SGDRegressor','ElasticNet','Lars','Lasso','LassoLars','LassoLarsIC','ARDRegression','BayesianRidge','MultiTaskElasticNet','MultiTaskLasso','HuberRegressor','QuantileRegressor','RANSACRegressor','TheilSenRegressor','GammaRegressor','PoissonRegressor','TweedieRegressor','PassiveAggressiveRegressor','AdaBoostRegressor','BaggingRegressor','ExtraTreesRegressor','GradientBoostingRegressor','HistGradientBoostingRegressor','RandomForestRegressor'];
             else:
                 print(f'Необходимо задать тип выхода (параметр task_output:str, значения: mono_output или multi_output)');
                 return error_str;
@@ -728,11 +707,9 @@ def run_one_pipeline_experiment_v1(num_features_select_from_all_min:int=5,num_fe
                 model_types:list[str]=list(set(model_types).intersection(set(models_having_coef_and_intercept_attributes)));
                 print(f'Выбран параметр use_only_linear_models=True');
             if(non_negative_y_guarantee==False)and('PoissonRegressor'in model_types):model_types.remove('PoissonRegressor');#Some value(s) of y are negative which is not allowed for Poisson regression.
-            if prefered_model_types is not None:model_types=list(set(model_types).intersection(set(prefered_model_types)));
             model_type:str=random.choice(seq=model_types);
         print(f'model_types: {model_types}');
         if model_hyperparams is None:#Если словарь гиперпараметров модели не указан, то значение каждого гиперпараметра выбирается случайным образом
-            model_hyperparams:dict[str,int|float|bool|str];
             if model_type=='LinearRegression':model_hyperparams={'fit_intercept':random.choice(seq=[True,False]),'tol':10**random.uniform(a=-9,b=-3),'positive':random.choice(seq=[True,False])};
             elif model_type=='Ridge':model_hyperparams={'alpha':10**random.uniform(a=-4,b=2),'fit_intercept':random.choice(seq=[True,False]),'max_iter':random.randint(a=500,b=20000),'tol':10**random.uniform(a=-9,b=-0.1),'solver':random.choice(seq=['auto','svd','cholesky','lsqr','sparse_cg','sag','saga','lbfgs']),'positive':bool(random.randint(a=0,b=1)),'random_state':hyperparam_random_state};
             elif model_type=='SGDRegressor':model_hyperparams={'loss':random.choice(seq=['squared_error','huber','epsilon_insensitive','squared_epsilon_insensitive']),'penalty':random.choice(seq=['l1','l2','elasticnet',None]),'alpha':10**random.uniform(a=-9,b=1.0),'l1_ratio':random.uniform(a=0.0,b=1.0),'fit_intercept':random.choice(seq=[True,False]),'max_iter':random.randint(a=100,b=20000),'tol':10**random.uniform(a=-6,b=0),'epsilon':10**random.uniform(a=-3,b=1),'learning_rate':random.choice(seq=['constant','optimal','invscaling','adaptive']),'eta0':10**random.uniform(a=-5,b=0),'power_t':random.uniform(a=-100,b=100),'early_stopping':random.choice(seq=[True,False]),'validation_fraction':random.uniform(a=0,b=1),'n_iter_no_change':random.randint(a=2,b=10),'warm_start':random.choice(seq=[True,False]),'average':random.choice(seq=[False,False,False,False,False,False,False,False,False,False,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20]),'random_state':hyperparam_random_state};
@@ -758,43 +735,24 @@ def run_one_pipeline_experiment_v1(num_features_select_from_all_min:int=5,num_fe
             elif model_type=='PassiveAggressiveRegressor':model_hyperparams={'C':10**random.uniform(a=-4,b=2),'fit_intercept':random.choice(seq=[True,False]),'max_iter':random.randint(a=100,b=2000),'tol':10**random.uniform(a=-5,b=-1),'early_stopping':random.choice(seq=[True,False]),'validation_fraction':random.uniform(a=0.0,b=0.9),'n_iter_no_change':random.randint(a=2,b=10),'loss':random.choice(seq=['epsilon_insensitive','squared_epsilon_insensitive']),'epsilon':random.uniform(a=0.05,b=0.15),'warm_start':random.choice(seq=[True,False]),'average':random.choice(seq=[False,False,False,False,False,False,False,False,False,False,False,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30]),'random_state':hyperparam_random_state};
             elif model_type=='AdaBoostRegressor':model_hyperparams={'n_estimators':random.randint(a=10,b=500),'learning_rate':10**random.uniform(a=-3,b=2),'loss':random.choice(seq=['linear','square','exponential']),'random_state':hyperparam_random_state};
             elif model_type=='BaggingRegressor':
-                model_hyperparams={'n_estimators':random.randint(a=5,b=30),'max_samples':random.uniform(a=0.2,b=1.0),'max_features':random.uniform(a=0.2,b=1.0),'bootstrap':random.choice(seq=[True,False]),'bootstrap_features':random.choice(seq=[True,False]),'oob_score':random.choice(seq=[True,False]),'warm_start':random.choice(seq=[True,False]),'n_jobs':n_cpu_cores,'random_state':hyperparam_random_state};
+                model_hyperparams={'n_estimators':random.randint(a=5,b=30),'max_samples':random.uniform(a=0.2,b=1.0),'max_features':random.uniform(a=0.2,b=1.0),'bootstrap':random.choice(seq=[True,False]),'bootstrap_features':random.choice(seq=[True,False]),'oob_score':random.choice(seq=[True,False]),'warm_start':random.choice(seq=[True,False]),'n_jobs':-1,'random_state':hyperparam_random_state};
                 #Out of bag estimation only available if bootstrap=True
                 if model_hyperparams['bootstrap']==False:model_hyperparams['oob_score']=False;
                 #Out of bag estimate only available if warm_start=False
                 if model_hyperparams['warm_start']==True:model_hyperparams['oob_score']=False;
 
-            elif model_type=='ExtraTreesRegressor':model_hyperparams={'n_estimators':random.randint(a=20,b=200),'criterion':random.choice(seq=['squared_error','absolute_error','friedman_mse','poisson']),'max_depth':random.randint(a=5,b=20),'min_samples_split':random.uniform(a=0.0,b=1.0),'min_samples_leaf':random.uniform(a=0.0,b=1.0),'min_weight_fraction_leaf':random.uniform(a=0.0,b=0.5),'max_features':random.choice(seq=['sqrt','log2',None]),'max_leaf_nodes':random.randint(a=5,b=10),'min_impurity_decrease':random.uniform(a=0.0,b=0.5),'bootstrap':random.choice(seq=[True,False]),'oob_score':random.choice(seq=[True,False]),'n_jobs':n_cpu_cores,'warm_start':random.choice(seq=[True,False]),'ccp_alpha':random.uniform(a=0.0,b=0.1),'max_samples':random.uniform(a=0.0,b=1.0),'random_state':hyperparam_random_state};
+            elif model_type=='ExtraTreesRegressor':model_hyperparams={'n_estimators':random.randint(a=20,b=200),'criterion':random.choice(seq=['squared_error','absolute_error','friedman_mse','poisson']),'max_depth':random.randint(a=5,b=20),'min_samples_split':random.uniform(a=0.0,b=1.0),'min_samples_leaf':random.uniform(a=0.0,b=1.0),'min_weight_fraction_leaf':random.uniform(a=0.0,b=0.5),'max_features':random.choice(seq=['sqrt','log2',None]),'max_leaf_nodes':random.randint(a=5,b=10),'min_impurity_decrease':random.uniform(a=0.0,b=0.5),'bootstrap':random.choice(seq=[True,False]),'oob_score':random.choice(seq=[True,False]),'n_jobs':-1,'warm_start':random.choice(seq=[True,False]),'ccp_alpha':random.uniform(a=0.0,b=0.1),'max_samples':random.uniform(a=0.0,b=1.0),'random_state':hyperparam_random_state};
             elif model_type=='GradientBoostingRegressor':model_hyperparams={'loss':random.choice(seq=['squared_error','absolute_error','huber','quantile']),'learning_rate':10**random.uniform(a=-2,b=0),'n_estimators':random.randint(a=20,b=300),'subsample':random.uniform(a=0.0,b=1.0),'criterion':random.choice(seq=['friedman_mse','squared_error']),'min_samples_split':random.uniform(a=0.0,b=1.0),'min_samples_leaf':random.uniform(a=0.0,b=1.0),'min_weight_fraction_leaf':random.uniform(a=0.0,b=0.5),'max_depth':random.randint(a=1,b=7),'min_impurity_decrease':random.uniform(a=0.0,b=1.0),'max_features':random.choice(seq=['sqrt','log2','sqrt','log2','sqrt','log2','sqrt','log2',0.01,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1.0,None,None,None,None,None,None]),'alpha':random.uniform(a=0.0,b=1.0),'max_leaf_nodes':random.randint(a=2,b=100),'warm_start':random.choice(seq=[True,False]),'validation_fraction':random.uniform(a=0.0,b=0.4),'n_iter_no_change':random.randint(a=5,b=20),'tol':10**random.uniform(a=-6,b=-2),'ccp_alpha':random.uniform(a=0.0,b=100.0),'random_state':hyperparam_random_state};
             elif model_type=='HistGradientBoostingRegressor':
                 model_hyperparams={'loss':random.choice(seq=['squared_error','absolute_error','gamma','poisson','quantile']),'quantile':random.uniform(a=0.0,b=1.0),'learning_rate':10**random.uniform(a=-2,b=0),'max_iter':random.randint(a=20,b=200),'max_leaf_nodes':random.randint(a=2,b=60),'max_depth':random.randint(a=2,b=10),'min_samples_leaf':random.randint(a=5,b=50),'l2_regularization':random.uniform(a=0.0,b=1.0),'max_features':random.uniform(a=0.2,b=1.0),'max_bins':random.randint(a=10,b=255),'warm_start':random.choice(seq=[True,False]),'early_stopping':random.choice(seq=['auto',True]),'scoring':random.choice(seq=['loss',None]),'validation_fraction':random.uniform(a=0.05,b=0.25),'n_iter_no_change':random.randint(a=3,b=30),'tol':10**random.uniform(a=-11,b=-3),'random_state':hyperparam_random_state};
                 #loss='poisson' requires non-negative y and sum(y) > 0
                 if non_negative_y_guarantee==False:model_hyperparams['loss']=random.choice(seq=['squared_error','absolute_error','gamma','quantile']);
             elif model_type=='RandomForestRegressor':
-                model_hyperparams={'n_estimators':random.randint(a=20,b=200),'criterion':random.choice(seq=['squared_error','absolute_error','friedman_mse','poisson']),'max_depth':random.randint(a=2,b=20),'min_samples_split':random.uniform(a=0.0,b=1.0),'min_samples_leaf':random.uniform(a=0.0,b=1.0),'min_weight_fraction_leaf':random.uniform(a=0.0,b=0.5),'max_features':random.choice(seq=['sqrt','log2','sqrt','log2','sqrt','log2','sqrt','log2','sqrt','log2',0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1.0]),'min_impurity_decrease':random.uniform(a=0.0,b=0.2),'bootstrap':random.choice(seq=[True,False]),'warm_start':random.choice(seq=[True,False]),'ccp_alpha':random.uniform(a=0.0,b=1.0),'max_samples':random.uniform(a=0.0,b=1.0),'n_jobs':n_cpu_cores,'random_state':hyperparam_random_state};
+                model_hyperparams={'n_estimators':random.randint(a=20,b=200),'criterion':random.choice(seq=['squared_error','absolute_error','friedman_mse','poisson']),'max_depth':random.randint(a=2,b=20),'min_samples_split':random.uniform(a=0.0,b=1.0),'min_samples_leaf':random.uniform(a=0.0,b=1.0),'min_weight_fraction_leaf':random.uniform(a=0.0,b=0.5),'max_features':random.choice(seq=['sqrt','log2','sqrt','log2','sqrt','log2','sqrt','log2','sqrt','log2',0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1.0]),'min_impurity_decrease':random.uniform(a=0.0,b=0.2),'bootstrap':random.choice(seq=[True,False]),'warm_start':random.choice(seq=[True,False]),'ccp_alpha':random.uniform(a=0.0,b=1.0),'max_samples':random.uniform(a=0.0,b=1.0),'n_jobs':-1,'random_state':hyperparam_random_state};
                 #`max_sample` cannot be set if `bootstrap=False`. Either switch to `bootstrap=True` or set `max_sample=None`
                 if model_hyperparams['bootstrap']==False:model_hyperparams['max_sample']=None;
                 #Some value(s) of y are negative which is not allowed for Poisson regression
                 if non_negative_y_guarantee==False:model_hyperparams['criterion']=random.choice(seq=['squared_error','absolute_error','friedman_mse']);
-            elif model_type=='XGBRegressor':model_hyperparams={'n_estimators':random.randint(a=20,b=100),'max_depth':random.randint(a=5,b=20),'max_leaves':random.randint(a=10,b=50),'max_bin':random.randint(a=50,b=500),'grow_policy':random.choice(seq=['depthwise','lossguide']),'learning_rate':random.uniform(a=0.0,b=0.5),'verbosity':0,'booster':random.choice(seq=['gbtree','gblinear','dart']),'tree_method':random.choice(seq=['exact','approx','hist']),'n_jobs':n_cpu_cores,'gamma':random.uniform(a=0.0,b=1.0),'min_child_weight':random.randint(a=1,b=5),'max_delta_step':random.randint(a=0,b=5),'subsample':random.uniform(a=0.7,b=1.0),'sampling_method':random.choice(seq=['uniform','gradient_based']),'colsample_bytree':random.uniform(a=0.7,b=1.0),'colsample_bylevel':random.uniform(a=0.7,b=1.0),'colsample_bynode':random.uniform(a=0.7,b=1.0),'reg_alpha':random.uniform(a=0.0,b=0.4),'reg_lambda':random.uniform(a=0.0,b=0.4),'scale_pos_weight':10**random.uniform(a=-1,b=1),'random_state':hyperparam_random_state,'missing':random.choice(seq=[0,1,-1]),'num_parallel_tree':random.randint(a=1,b=10),'monotone_constraints':random.choice(seq=[1,-1,0,0,0,0,0]),'importance_type':random.choice(seq=['gain','weight','cover','total_gain','total_cover'])};
-            elif model_type=='XGBRFRegressor':model_hyperparams={'n_estimators':random.randint(a=50,b=500),'max_depth':random.randint(a=3,b=7),'max_leaves':random.randint(a=50,b=1000),'max_bin':random.randint(a=50,b=500),'grow_policy':random.choice(seq=['depthwise','lossguide']),'learning_rate':random.uniform(a=0.0,b=0.5),'verbosity':0,'booster':random.choice(seq=['gbtree','gblinear','dart']),'tree_method':random.choice(seq=['exact','approx','hist']),'n_jobs':n_cpu_cores,'gamma':random.uniform(a=0.0,b=1.0),'min_child_weight':random.randint(a=1,b=5),'max_delta_step':random.randint(a=0,b=5),'subsample':random.uniform(a=0.7,b=1.0),'sampling_method':random.choice(seq=['uniform','gradient_based']),'colsample_bytree':random.uniform(a=0.7,b=1.0),'colsample_bylevel':random.uniform(a=0.7,b=1.0),'colsample_bynode':random.uniform(a=0.7,b=1.0),'reg_alpha':random.uniform(a=0.0,b=0.4),'reg_lambda':random.uniform(a=0.0,b=0.4),'scale_pos_weight':10**random.uniform(a=-1,b=1),'random_state':hyperparam_random_state,'missing':random.choice(seq=[0,1,-1]),'num_parallel_tree':random.randint(a=1,b=10),'monotone_constraints':random.choice(seq=[1,-1,0,0,0,0,0]),'importance_type':random.choice(seq=['gain','weight','cover','total_gain','total_cover'])};
-            elif model_type=='LGBMRegressor':model_hyperparams={'boosting_type':random.choice(seq=['gbdt','dart','rf']),'num_leaves':random.randint(a=10,b=55),'max_depth':random.randint(a=5,b=20),'learning_rate':10**random.uniform(a=-1.5,b=-0.5),'n_estimators':random.randint(a=50,b=300),'subsample_for_bin':random.randint(a=50000,b=500000),'min_split_gain':random.uniform(a=0.0,b=0.02),'min_child_weight':10**random.uniform(a=-3.5,b=-2.5),'min_child_samples':random.randint(a=10,b=30),'subsample':random.uniform(a=0.9,b=1.0),'colsample_bytree':random.uniform(a=0.8,b=1.0),'reg_alpha':10**random.uniform(a=-5,b=-0.5),'reg_lambda':10**random.uniform(a=-5,b=-0.5),'random_state':hyperparam_random_state,'n_jobs':n_cpu_cores,'importance_type':random.choice(seq=['split','gain'])};
-            elif model_type=='DaskLGBMRegressor':model_hyperparams={'boosting_type':random.choice(seq=['gbdt','dart','rf']),'num_leaves':random.randint(a=10,b=55),'max_depth':random.randint(a=5,b=20),'learning_rate':10**random.uniform(a=-1.5,b=-0.5),'n_estimators':random.randint(a=50,b=300),'subsample_for_bin':random.randint(a=50000,b=500000),'min_split_gain':random.uniform(a=0.0,b=0.02),'min_child_weight':10**random.uniform(a=-3.5,b=-2.5),'min_child_samples':random.randint(a=10,b=30),'subsample':random.uniform(a=0.9,b=1.0),'colsample_bytree':random.uniform(a=0.8,b=1.0),'reg_alpha':10**random.uniform(a=-5,b=-0.5),'reg_lambda':10**random.uniform(a=-5,b=-0.5),'random_state':hyperparam_random_state,'n_jobs':n_cpu_cores,'importance_type':random.choice(seq=['split','gain'])};
-            elif model_type=='GaussianProcessRegressor':model_hyperparams={'alpha':10**random.uniform(a=-12,b=-8),'normalize_y':random.choice(seq=[True,False]),'random_state':hyperparam_random_state};
-            elif model_type=='KNeighborsRegressor':model_hyperparams={'n_neighbors':random.randint(a=1,b=15),'weights':random.choice(seq=['uniform','distance']),'algorithm':random.choice(seq=['auto','ball_tree','kd_tree','brute']),'leaf_size':random.randint(a=10,b=50),'p':random.uniform(a=1.0,b=5.0),'metric':random.choice(seq=['minkowski','cityblock','cosine','euclidean','haversine','l1','l2']),'n_jobs':n_cpu_cores};
-            elif model_type=='RadiusNeighborsRegressor':model_hyperparams={'radius':10**random.uniform(a=-1.5,b=1.5),'weights':random.choice(seq=['uniform','distance']),'algorithm':random.choice(seq=['auto','ball_tree','kd_tree','brute']),'leaf_size':random.randint(a=10,b=50),'p':random.uniform(a=1.0,b=5.0),'metric':random.choice(seq=['minkowski','cityblock','cosine','euclidean','haversine','l1','l2']),'n_jobs':n_cpu_cores};
-            elif model_type=='MLPRegressor':
-                model_hyperparams={'loss':random.choice(seq=['squared_error','poisson']),'hidden_layer_sizes':generate_hidden_layer_sizes_tuple(n_layers=random.randint(a=1,b=5),n_in=n_features_selected_randomly,n_out=1,allow_increase=true_with_prob(p=0.1),log_scale=true_with_prob(p=0.85)),'activation':random.choice(seq=['logistic','tanh','relu','relu']),'solver':random.choice(seq=['lbfgs','sgd','adam']),'alpha':10**random.uniform(a=-6,b=-2),'learning_rate':random.choice(seq=['constant','invscaling','adaptive']),'learning_rate_init':10**random.uniform(a=-5,b=-1),'power_t':random.uniform(a=0.3,b=0.7),'max_iter':random.randint(a=100,b=1000),'shuffle':True,'random_state':hyperparam_random_state,'tol':10**random.uniform(a=-6,b=-2),'warm_start':random.choice(seq=[True,False]),'momentum':random.uniform(a=0.8,b=1.0),'nesterovs_momentum':random.choice(seq=[True,False]),'early_stopping':random.choice(seq=[True,False]),'validation_fraction':random.uniform(a=0.05,b=0.15),'beta_1':random.uniform(a=0.8,b=1.0),'beta_2':random.uniform(a=0.998,b=1.0),'epsilon':10**random.uniform(a=-10,b=-6),'n_iter_no_change':random.randint(a=1,b=20),'max_fun':random.randint(a=5000,b=35000)};
-                if non_negative_y_guarantee==False:model_hyperparams['loss']='squared_error';
-
-    #3.6. Инициализация словарей для хранения конструкторов для scaler, feature_selector, model
-    imputer_constructors_dict:dict[str,AnyImputer]={'KNNImputer':KNNImputer,'SimpleImputer':SimpleImputer};
-    scaler_constructors_dict:dict[str,AnyScaler]={'MaxAbsScaler':MaxAbsScaler,'MinMaxScaler':MinMaxScaler,'RobustScaler':RobustScaler,'StandardScaler':StandardScaler};
-    fs_estimator_constructors_dict:dict[str,AnyFSEstimator]={'LogisticRegression':LogisticRegression,'PassiveAggressiveClassifier':PassiveAggressiveClassifier,'Perceptron':Perceptron,'RidgeClassifier':RidgeClassifier,'SGDClassifier':SGDClassifier,'LinearRegression':LinearRegression,'Ridge':Ridge,'SGDRegressor':SGDRegressor,'ElasticNet':ElasticNet,'Lars':Lars,'Lasso':Lasso,'LassoLars':LassoLars,'LassoLarsIC':LassoLarsIC,'OrthogonalMatchingPursuit':OrthogonalMatchingPursuit,'ARDRegression':ARDRegression,'BayesianRidge':BayesianRidge,'HuberRegressor':HuberRegressor,'QuantileRegressor':QuantileRegressor,'RANSACRegressor':RANSACRegressor,'TheilSenRegressor':TheilSenRegressor,'GammaRegressor':GammaRegressor,'PoissonRegressor':PoissonRegressor,'TweedieRegressor':TweedieRegressor,'PassiveAggressiveRegressor':PassiveAggressiveRegressor,'LinearSVC':LinearSVC,'NuSVC':NuSVC,'SVC':SVC,'LinearSVR':LinearSVR,'NuSVR':NuSVR,'SVR':SVR};
-    feature_selector_constructors_dict:dict[str,AnyFeatureSelector]={'GenericUnivariateSelect':GenericUnivariateSelect,'RFE':RFE,'RFECV':RFECV,'SelectFdr':SelectFdr,'SelectFpr':SelectFpr,'SelectFromModel':SelectFromModel,'SelectFwe':SelectFwe,'SelectKBest':SelectKBest,'SelectPercentile':SelectPercentile,'SequentialFeatureSelector':SequentialFeatureSelector};
-    model_constructors_dict:dict[str,AnyModel]={'LogisticRegression':LogisticRegression,'PassiveAggressiveClassifier':PassiveAggressiveClassifier,'Perceptron':Perceptron,'RidgeClassifier':RidgeClassifier,'SGDClassifier':SGDClassifier,'AdaBoostClassifier':AdaBoostClassifier,'BaggingClassifier':BaggingClassifier,'ExtraTreesClassifier':ExtraTreesClassifier,'GradientBoostingClassifier':GradientBoostingClassifier,'HistGradientBoostingClassifier':HistGradientBoostingClassifier,'RandomForestClassifier':RandomForestClassifier,'XGBClassifier':XGBClassifier,'LGBMClassifier':LGBMClassifier,'LinearRegression':LinearRegression,'Ridge':Ridge,'SGDRegressor':SGDRegressor,'ElasticNet':ElasticNet,'Lasso':Lasso,'LassoLarsIC':LassoLarsIC,'ARDRegression':ARDRegression,'OrthogonalMatchingPursuit':OrthogonalMatchingPursuit,'BayesianRidge':BayesianRidge,'MultiTaskElasticNet':MultiTaskElasticNet,'MultiTaskLasso':MultiTaskLasso,'HuberRegressor':HuberRegressor,'QuantileRegressor':QuantileRegressor,'RANSACRegressor':RANSACRegressor,'Lars':Lars,'TheilSenRegressor':TheilSenRegressor,'GammaRegressor':GammaRegressor,'PoissonRegressor':PoissonRegressor,'TweedieRegressor':TweedieRegressor,'PassiveAggressiveRegressor':PassiveAggressiveRegressor,'LassoLars':LassoLars,'AdaBoostRegressor':AdaBoostRegressor,'BaggingRegressor':BaggingRegressor,'ExtraTreesRegressor':ExtraTreesRegressor,'GradientBoostingRegressor':GradientBoostingRegressor,'HistGradientBoostingRegressor':HistGradientBoostingRegressor,'RandomForestRegressor':RandomForestRegressor,'XGBRFClassifier':XGBRFClassifier,'DaskLGBMClassifier':DaskLGBMClassifier,'XGBRegressor':XGBRegressor,'XGBRFRegressor':XGBRFRegressor,'LGBMRegressor':LGBMRegressor,'DaskLGBMRegressor':DaskLGBMRegressor,'GaussianProcessClassifier':GaussianProcessClassifier,'GaussianProcessRegressor':GaussianProcessRegressor,'BernoulliNB':BernoulliNB,'ComplementNB':ComplementNB,'GaussianNB':GaussianNB,'MultinomialNB':MultinomialNB,'KNeighborsClassifier':KNeighborsClassifier,'NearestCentroid':NearestCentroid,'RadiusNeighborsClassifier':RadiusNeighborsClassifier,'KNeighborsRegressor':KNeighborsRegressor,'RadiusNeighborsRegressor':RadiusNeighborsRegressor};
-    
-
 
     # 4. Подготовка кросс-валидации
     if problem_type=='classification':K_Fold:StratifiedKFold=StratifiedKFold(n_splits=num_folds,shuffle=True,random_state=split_random_state)
@@ -827,7 +785,8 @@ def run_one_pipeline_experiment_v1(num_features_select_from_all_min:int=5,num_fe
 
         #4.1. Использование imputer (если выбрано) для cross_valid
         if use_imputer==True:
-            imputer_cross_valid:AnyImputer=imputer_constructors_dict[imputer_type](**imputer_hyperparams);
+            if imputer_type=='KNNImputer':imputer_cross_valid=KNNImputer(**imputer_hyperparams);
+            elif imputer_type=='SimpleImputer':imputer_cross_valid=SimpleImputer(**imputer_hyperparams);
             imputer_cross_valid.fit(X=X_train_fold,y=y_train_fold);
             X_train_fold_imputed=imputer_cross_valid.transform(X=X_train_fold);
             X_valid_fold_imputed=imputer_cross_valid.transform(X=X_valid_fold);
@@ -849,7 +808,10 @@ def run_one_pipeline_experiment_v1(num_features_select_from_all_min:int=5,num_fe
 
         #4.3. Использование scaler (если выбрано) для cross_valid
         if use_scaler==True:
-            scaler_cross_valid:AnyScaler=scaler_constructors_dict[scaler_type](**scaler_hyperparams);
+            if scaler_type=='MaxAbsScaler':scaler_cross_valid=MaxAbsScaler(**scaler_hyperparams);
+            elif scaler_type=='MinMaxScaler':scaler_cross_valid=MinMaxScaler(**scaler_hyperparams);
+            elif scaler_type=='RobustScaler':scaler_cross_valid=RobustScaler(**scaler_hyperparams);
+            elif scaler_type=='StandardScaler':scaler_cross_valid=StandardScaler(**scaler_hyperparams);
             scaler_cross_valid.fit(X=X_train_fold_var_thresholded);#fit только на train, без valid
             X_train_fold_scaled=scaler_cross_valid.transform(X=X_train_fold_var_thresholded);
             X_valid_fold_scaled=scaler_cross_valid.transform(X=X_valid_fold_var_thresholded);
@@ -866,10 +828,48 @@ def run_one_pipeline_experiment_v1(num_features_select_from_all_min:int=5,num_fe
                 elif fs_score_func_type=='chi2':score_func_cross_valid:callable=chi2;
                 elif fs_score_func_type=='f_regression':score_func_cross_valid:callable=f_regression;
                 elif fs_score_func_type=='mutual_info_regression':score_func_cross_valid:callable=mutual_info_regression;
-                feature_selector_cross_valid:AnyFeatureSelector=feature_selector_constructors_dict[feature_selector_type](**feature_selector_hyperparams);
+                if feature_selector_type=='GenericUnivariateSelect':feature_selector_cross_valid=GenericUnivariateSelect(score_func=score_func_cross_valid,**feature_selector_hyperparams);
+                elif feature_selector_type=='SelectFdr':feature_selector_cross_valid=SelectFdr(score_func=score_func_cross_valid,**feature_selector_hyperparams);
+                elif feature_selector_type=='SelectFpr':feature_selector_cross_valid=SelectFpr(score_func=score_func_cross_valid,**feature_selector_hyperparams);
+                elif feature_selector_type=='SelectFwe':feature_selector_cross_valid=SelectFwe(score_func=score_func_cross_valid,**feature_selector_hyperparams);
+                elif feature_selector_type=='SelectKBest':feature_selector_cross_valid=SelectKBest(score_func=score_func_cross_valid,**feature_selector_hyperparams);
+                elif feature_selector_type=='SelectPercentile':feature_selector_cross_valid=SelectPercentile(score_func=score_func_cross_valid,**feature_selector_hyperparams);
+            elif feature_selector_type=='VarianceThreshold':feature_selector_cross_valid=VarianceThreshold(**feature_selector_hyperparams);
             elif feature_selector_type in feature_selector_types_estimator_all:
-                fs_estimator_cross_valid:AnyFSEstimator=fs_estimator_constructors_dict[fs_estimator_type](**fs_estimator_hyperparams);
-                feature_selector_cross_valid:AnyFeatureSelector=feature_selector_constructors_dict[feature_selector_type](estimator=fs_estimator_cross_valid,**feature_selector_hyperparams);
+                if fs_estimator_type=='LogisticRegression':fs_estimator_cross_valid=LogisticRegression(**fs_estimator_hyperparams);
+                elif fs_estimator_type=='PassiveAggressiveClassifier':fs_estimator_cross_valid=PassiveAggressiveClassifier(**fs_estimator_hyperparams);
+                elif fs_estimator_type=='Perceptron':fs_estimator_cross_valid=Perceptron(**fs_estimator_hyperparams);
+                elif fs_estimator_type=='RidgeClassifier':fs_estimator_cross_valid=RidgeClassifier(**fs_estimator_hyperparams);
+                elif fs_estimator_type=='SGDClassifier':fs_estimator_cross_valid=SGDClassifier(**fs_estimator_hyperparams);
+                elif fs_estimator_type=='LinearRegression':fs_estimator_cross_valid=LinearRegression(**fs_estimator_hyperparams);
+                elif fs_estimator_type=='Ridge':fs_estimator_cross_valid=Ridge(**fs_estimator_hyperparams);
+                elif fs_estimator_type=='SGDRegressor':fs_estimator_cross_valid=SGDRegressor(**fs_estimator_hyperparams);
+                elif fs_estimator_type=='ElasticNet':fs_estimator_cross_valid=ElasticNet(**fs_estimator_hyperparams);
+                elif fs_estimator_type=='Lars':fs_estimator_cross_valid=Lars(**fs_estimator_hyperparams);
+                elif fs_estimator_type=='Lasso':fs_estimator_cross_valid=Lasso(**fs_estimator_hyperparams);
+                elif fs_estimator_type=='LassoLars':fs_estimator_cross_valid=LassoLars(**fs_estimator_hyperparams);
+                elif fs_estimator_type=='LassoLarsIC':fs_estimator_cross_valid=LassoLarsIC(**fs_estimator_hyperparams);
+                elif fs_estimator_type=='OrthogonalMatchingPursuit':fs_estimator_cross_valid=OrthogonalMatchingPursuit(**fs_estimator_hyperparams);
+                elif fs_estimator_type=='ARDRegression':fs_estimator_cross_valid=ARDRegression(**fs_estimator_hyperparams);
+                elif fs_estimator_type=='BayesianRidge':fs_estimator_cross_valid=BayesianRidge(**fs_estimator_hyperparams);
+                elif fs_estimator_type=='HuberRegressor':fs_estimator_cross_valid=HuberRegressor(**fs_estimator_hyperparams);
+                elif fs_estimator_type=='QuantileRegressor':fs_estimator_cross_valid=QuantileRegressor(**fs_estimator_hyperparams);
+                elif fs_estimator_type=='RANSACRegressor':fs_estimator_cross_valid=RANSACRegressor(**fs_estimator_hyperparams);
+                elif fs_estimator_type=='TheilSenRegressor':fs_estimator_cross_valid=TheilSenRegressor(**fs_estimator_hyperparams);
+                elif fs_estimator_type=='GammaRegressor':fs_estimator_cross_valid=GammaRegressor(**fs_estimator_hyperparams);
+                elif fs_estimator_type=='PoissonRegressor':fs_estimator_cross_valid=PoissonRegressor(**fs_estimator_hyperparams);
+                elif fs_estimator_type=='TweedieRegressor':fs_estimator_cross_valid=TweedieRegressor(**fs_estimator_hyperparams);
+                elif fs_estimator_type=='PassiveAggressiveRegressor':fs_estimator_cross_valid=PassiveAggressiveRegressor(**fs_estimator_hyperparams);
+                elif fs_estimator_type=='LinearSVC':fs_estimator_cross_valid=LinearSVC(**fs_estimator_hyperparams);
+                elif fs_estimator_type=='NuSVC':fs_estimator_cross_valid=NuSVC(**fs_estimator_hyperparams);
+                elif fs_estimator_type=='SVC':fs_estimator_cross_valid=SVC(**fs_estimator_hyperparams);
+                elif fs_estimator_type=='LinearSVR':fs_estimator_cross_valid=LinearSVR(**fs_estimator_hyperparams);
+                elif fs_estimator_type=='NuSVR':fs_estimator_cross_valid=NuSVR(**fs_estimator_hyperparams);
+                elif fs_estimator_type=='SVR':fs_estimator_cross_valid=SVR(**fs_estimator_hyperparams);
+                if feature_selector_type=='RFE':feature_selector_cross_valid=RFE(estimator=fs_estimator_cross_valid,**feature_selector_hyperparams);
+                elif feature_selector_type=='RFECV':feature_selector_cross_valid=RFECV(estimator=fs_estimator_cross_valid,**feature_selector_hyperparams);
+                elif feature_selector_type=='SelectFromModel':feature_selector_cross_valid=SelectFromModel(estimator=fs_estimator_cross_valid,**feature_selector_hyperparams);
+                elif feature_selector_type=='SequentialFeatureSelector':feature_selector_cross_valid=SequentialFeatureSelector(estimator=fs_estimator_cross_valid,**feature_selector_hyperparams);
             feature_selector_cross_valid.fit(X=X_train_fold_scaled,y=y_train_fold);
             X_train_fold_feature_selected=feature_selector_cross_valid.transform(X=X_train_fold_scaled);
             X_valid_fold_feature_selected=feature_selector_cross_valid.transform(X=X_valid_fold_scaled);
@@ -882,7 +882,47 @@ def run_one_pipeline_experiment_v1(num_features_select_from_all_min:int=5,num_fe
             return error_str;
 
         #4.5. Использование model (всегда выбрано) для cross_valid
-        model_cross_valid:AnyModel=model_constructors_dict[model_type](**model_hyperparams);
+        if problem_type=='classification':
+            if model_type=='AdaBoostClassifier':model_cross_valid=AdaBoostClassifier(**model_hyperparams);
+            elif model_type=='BaggingClassifier':model_cross_valid=BaggingClassifier(**model_hyperparams);
+            elif model_type=='ExtraTreesClassifier':model_cross_valid=ExtraTreesClassifier(**model_hyperparams);
+            elif model_type=='GradientBoostingClassifier':model_cross_valid=GradientBoostingClassifier(**model_hyperparams);
+            elif model_type=='HistGradientBoostingClassifier':model_cross_valid=HistGradientBoostingClassifier(**model_hyperparams);
+            elif model_type=='RandomForestClassifier':model_cross_valid=RandomForestClassifier(**model_hyperparams);
+            elif model_type=='XGBClassifier':model_cross_valid=XGBClassifier(**model_hyperparams);
+            elif model_type=='LGBMClassifier':model_cross_valid=LGBMClassifier(**model_hyperparams);
+            elif model_type=='LogisticRegression':model_cross_valid=LogisticRegression(**model_hyperparams);
+            elif model_type=='PassiveAggressiveClassifier':model_cross_valid=PassiveAggressiveClassifier(**model_hyperparams);
+            elif model_type=='Perceptron':model_cross_valid=Perceptron(**model_hyperparams);
+            elif model_type=='RidgeClassifier':model_cross_valid=RidgeClassifier(**model_hyperparams);
+            elif model_type=='SGDClassifier':model_cross_valid=SGDClassifier(**model_hyperparams);
+        elif problem_type=='regression':
+            if model_type=='LinearRegression':model_cross_valid=LinearRegression(**model_hyperparams);
+            elif model_type=='Ridge':model_cross_valid=Ridge(**model_hyperparams);
+            elif model_type=='SGDRegressor':model_cross_valid=SGDRegressor(**model_hyperparams);
+            elif model_type=='ElasticNet':model_cross_valid=ElasticNet(**model_hyperparams);
+            elif model_type=='Lars':model_cross_valid=Lars(**model_hyperparams);
+            elif model_type=='Lasso':model_cross_valid=Lasso(**model_hyperparams);
+            elif model_type=='LassoLars':model_cross_valid=LassoLars(**model_hyperparams);
+            elif model_type=='LassoLarsIC':model_cross_valid=LassoLarsIC(**model_hyperparams);
+            elif model_type=='ARDRegression':model_cross_valid=ARDRegression(**model_hyperparams);
+            elif model_type=='BayesianRidge':model_cross_valid=BayesianRidge(**model_hyperparams);
+            elif model_type=='MultiTaskElasticNet':model_cross_valid=MultiTaskElasticNet(**model_hyperparams);
+            elif model_type=='MultiTaskLasso':model_cross_valid=MultiTaskLasso(**model_hyperparams);
+            elif model_type=='HuberRegressor':model_cross_valid=HuberRegressor(**model_hyperparams);
+            elif model_type=='QuantileRegressor':model_cross_valid=QuantileRegressor(**model_hyperparams);
+            elif model_type=='RANSACRegressor':model_cross_valid=RANSACRegressor(**model_hyperparams);
+            elif model_type=='TheilSenRegressor':model_cross_valid=TheilSenRegressor(**model_hyperparams);
+            elif model_type=='GammaRegressor':model_cross_valid=GammaRegressor(**model_hyperparams);
+            elif model_type=='PoissonRegressor':model_cross_valid=PoissonRegressor(**model_hyperparams);
+            elif model_type=='TweedieRegressor':model_cross_valid=TweedieRegressor(**model_hyperparams);
+            elif model_type=='PassiveAggressiveRegressor':model_cross_valid=PassiveAggressiveRegressor(**model_hyperparams);
+            elif model_type=='AdaBoostRegressor':model_cross_valid=AdaBoostRegressor(**model_hyperparams);
+            elif model_type=='BaggingRegressor':model_cross_valid=BaggingRegressor(**model_hyperparams);
+            elif model_type=='ExtraTreesRegressor':model_cross_valid=ExtraTreesRegressor(**model_hyperparams);
+            elif model_type=='GradientBoostingRegressor':model_cross_valid=GradientBoostingRegressor(**model_hyperparams);
+            elif model_type=='HistGradientBoostingRegressor':model_cross_valid=HistGradientBoostingRegressor(**model_hyperparams);
+            elif model_type=='RandomForestRegressor':model_cross_valid=RandomForestRegressor(**model_hyperparams);
         model_cross_valid.fit(X=X_train_fold_feature_selected,y=y_train_fold);
         y_valid_pred=model_cross_valid.predict(X_valid_fold_feature_selected);
         if problem_type=='classification':
@@ -945,7 +985,8 @@ def run_one_pipeline_experiment_v1(num_features_select_from_all_min:int=5,num_fe
 
     #6.1. Использование imputer (если выбрано) для for_final_test
     if use_imputer==True:
-        imputer_for_final_test:AnyImputer=imputer_constructors_dict[imputer_type](**imputer_hyperparams);
+        if imputer_type=='KNNImputer':imputer_for_final_test=KNNImputer(**imputer_hyperparams);
+        elif imputer_type=='SimpleImputer':imputer_for_final_test=SimpleImputer(**imputer_hyperparams);
         imputer_for_final_test.fit(X=X_train_cv,y=y_train_cv);
         X_train_cv_imputed=imputer_for_final_test.transform(X=X_train_cv);
         X_test_final_imputed=imputer_for_final_test.transform(X=X_test_final);
@@ -967,7 +1008,10 @@ def run_one_pipeline_experiment_v1(num_features_select_from_all_min:int=5,num_fe
 
     #6.3. Использование scaler (если выбрано) для for_final_test
     if use_scaler==True:
-        scaler_for_final_test:AnyScaler=scaler_constructors_dict[scaler_type](**scaler_hyperparams);
+        if scaler_type=='MaxAbsScaler':scaler_for_final_test=MaxAbsScaler(**scaler_hyperparams);
+        elif scaler_type=='MinMaxScaler':scaler_for_final_test=MinMaxScaler(**scaler_hyperparams);
+        elif scaler_type=='RobustScaler':scaler_for_final_test=RobustScaler(**scaler_hyperparams);
+        elif scaler_type=='StandardScaler':scaler_for_final_test=StandardScaler(**scaler_hyperparams);
         scaler_for_final_test.fit(X=X_train_cv_var_thresholded);#fit только на train, без valid
         X_train_cv_scaled=scaler_for_final_test.transform(X=X_train_cv_var_thresholded);
         X_test_final_scaled=scaler_for_final_test.transform(X=X_test_final_var_thresholded);
@@ -985,10 +1029,48 @@ def run_one_pipeline_experiment_v1(num_features_select_from_all_min:int=5,num_fe
             elif fs_score_func_type=='chi2':score_func_for_final_test:callable=chi2;
             elif fs_score_func_type=='f_regression':score_func_for_final_test:callable=f_regression;
             elif fs_score_func_type=='mutual_info_regression':score_func_for_final_test:callable=mutual_info_regression;
-            feature_selector_for_final_test:AnyFeatureSelector=feature_selector_constructors_dict[feature_selector_type](**feature_selector_hyperparams);
+            if feature_selector_type=='GenericUnivariateSelect':feature_selector_for_final_test=GenericUnivariateSelect(score_func=score_func_for_final_test,**feature_selector_hyperparams);
+            elif feature_selector_type=='SelectFdr':feature_selector_for_final_test=SelectFdr(score_func=score_func_for_final_test,**feature_selector_hyperparams);
+            elif feature_selector_type=='SelectFpr':feature_selector_for_final_test=SelectFpr(score_func=score_func_for_final_test,**feature_selector_hyperparams);
+            elif feature_selector_type=='SelectFwe':feature_selector_for_final_test=SelectFwe(score_func=score_func_for_final_test,**feature_selector_hyperparams);
+            elif feature_selector_type=='SelectKBest':feature_selector_for_final_test=SelectKBest(score_func=score_func_for_final_test,**feature_selector_hyperparams);
+            elif feature_selector_type=='SelectPercentile':feature_selector_for_final_test=SelectPercentile(score_func=score_func_for_final_test,**feature_selector_hyperparams);
+        elif feature_selector_type=='VarianceThreshold':feature_selector_for_final_test=VarianceThreshold(**feature_selector_hyperparams);
         elif feature_selector_type in feature_selector_types_estimator_all:
-            fs_estimator_for_final_test:AnyFSEstimator=fs_estimator_constructors_dict[fs_estimator_type](**fs_estimator_hyperparams);
-            feature_selector_for_final_test:AnyFeatureSelector=feature_selector_constructors_dict[feature_selector_type](estimator=fs_estimator_for_final_test,**feature_selector_hyperparams);
+            if fs_estimator_type=='LogisticRegression':fs_estimator_for_final_test=LogisticRegression(**fs_estimator_hyperparams);
+            elif fs_estimator_type=='PassiveAggressiveClassifier':fs_estimator_for_final_test=PassiveAggressiveClassifier(**fs_estimator_hyperparams);
+            elif fs_estimator_type=='Perceptron':fs_estimator_for_final_test=Perceptron(**fs_estimator_hyperparams);
+            elif fs_estimator_type=='RidgeClassifier':fs_estimator_for_final_test=RidgeClassifier(**fs_estimator_hyperparams);
+            elif fs_estimator_type=='SGDClassifier':fs_estimator_for_final_test=SGDClassifier(**fs_estimator_hyperparams);
+            elif fs_estimator_type=='LinearRegression':fs_estimator_for_final_test=LinearRegression(**fs_estimator_hyperparams);
+            elif fs_estimator_type=='Ridge':fs_estimator_for_final_test=Ridge(**fs_estimator_hyperparams);
+            elif fs_estimator_type=='SGDRegressor':fs_estimator_for_final_test=SGDRegressor(**fs_estimator_hyperparams);
+            elif fs_estimator_type=='ElasticNet':fs_estimator_for_final_test=ElasticNet(**fs_estimator_hyperparams);
+            elif fs_estimator_type=='Lars':fs_estimator_for_final_test=Lars(**fs_estimator_hyperparams);
+            elif fs_estimator_type=='Lasso':fs_estimator_for_final_test=Lasso(**fs_estimator_hyperparams);
+            elif fs_estimator_type=='LassoLars':fs_estimator_for_final_test=LassoLars(**fs_estimator_hyperparams);
+            elif fs_estimator_type=='LassoLarsIC':fs_estimator_for_final_test=LassoLarsIC(**fs_estimator_hyperparams);
+            elif fs_estimator_type=='OrthogonalMatchingPursuit':fs_estimator_for_final_test=OrthogonalMatchingPursuit(**fs_estimator_hyperparams);
+            elif fs_estimator_type=='ARDRegression':fs_estimator_for_final_test=ARDRegression(**fs_estimator_hyperparams);
+            elif fs_estimator_type=='BayesianRidge':fs_estimator_for_final_test=BayesianRidge(**fs_estimator_hyperparams);
+            elif fs_estimator_type=='HuberRegressor':fs_estimator_for_final_test=HuberRegressor(**fs_estimator_hyperparams);
+            elif fs_estimator_type=='QuantileRegressor':fs_estimator_for_final_test=QuantileRegressor(**fs_estimator_hyperparams);
+            elif fs_estimator_type=='RANSACRegressor':fs_estimator_for_final_test=RANSACRegressor(**fs_estimator_hyperparams);
+            elif fs_estimator_type=='TheilSenRegressor':fs_estimator_for_final_test=TheilSenRegressor(**fs_estimator_hyperparams);
+            elif fs_estimator_type=='GammaRegressor':fs_estimator_for_final_test=GammaRegressor(**fs_estimator_hyperparams);
+            elif fs_estimator_type=='PoissonRegressor':fs_estimator_for_final_test=PoissonRegressor(**fs_estimator_hyperparams);
+            elif fs_estimator_type=='TweedieRegressor':fs_estimator_for_final_test=TweedieRegressor(**fs_estimator_hyperparams);
+            elif fs_estimator_type=='PassiveAggressiveRegressor':fs_estimator_for_final_test=PassiveAggressiveRegressor(**fs_estimator_hyperparams);
+            elif fs_estimator_type=='LinearSVC':fs_estimator_for_final_test=LinearSVC(**fs_estimator_hyperparams);
+            elif fs_estimator_type=='NuSVC':fs_estimator_for_final_test=NuSVC(**fs_estimator_hyperparams);
+            elif fs_estimator_type=='SVC':fs_estimator_for_final_test=SVC(**fs_estimator_hyperparams);
+            elif fs_estimator_type=='LinearSVR':fs_estimator_for_final_test=LinearSVR(**fs_estimator_hyperparams);
+            elif fs_estimator_type=='NuSVR':fs_estimator_for_final_test=NuSVR(**fs_estimator_hyperparams);
+            elif fs_estimator_type=='SVR':fs_estimator_for_final_test=SVR(**fs_estimator_hyperparams);
+            if feature_selector_type=='RFE':feature_selector_for_final_test=RFE(estimator=fs_estimator_for_final_test,**feature_selector_hyperparams);
+            elif feature_selector_type=='RFECV':feature_selector_for_final_test=RFECV(estimator=fs_estimator_for_final_test,**feature_selector_hyperparams);
+            elif feature_selector_type=='SelectFromModel':feature_selector_for_final_test=SelectFromModel(estimator=fs_estimator_for_final_test,**feature_selector_hyperparams);
+            elif feature_selector_type=='SequentialFeatureSelector':feature_selector_for_final_test=SequentialFeatureSelector(estimator=fs_estimator_for_final_test,**feature_selector_hyperparams);
         feature_selector_for_final_test.fit(X=X_train_cv_scaled,y=y_train_cv);
         X_train_cv_feature_selected=feature_selector_for_final_test.transform(X=X_train_cv_scaled);
         X_test_final_feature_selected=feature_selector_for_final_test.transform(X=X_test_final_scaled);
@@ -1000,8 +1082,48 @@ def run_one_pipeline_experiment_v1(num_features_select_from_all_min:int=5,num_fe
         print(f'После применения feature_selector типа {feature_selector_type} на этапе final_test количество отобранных признаков равно нулю, обработка этого пайплайна прервана');
         return error_str;
     
-    #6.5. Использование model (всегда выбрано) для for_final_test
-    model_for_final_test:AnyModel=model_constructors_dict[model_type](**model_hyperparams);
+    #6.5. Использование model (всегда выбрано) для for_final_test    
+    if problem_type=='classification':
+        if model_type=='AdaBoostClassifier':model_for_final_test=AdaBoostClassifier(**model_hyperparams);
+        elif model_type=='BaggingClassifier':model_for_final_test=BaggingClassifier(**model_hyperparams);
+        elif model_type=='ExtraTreesClassifier':model_for_final_test=ExtraTreesClassifier(**model_hyperparams);
+        elif model_type=='GradientBoostingClassifier':model_for_final_test=GradientBoostingClassifier(**model_hyperparams);
+        elif model_type=='HistGradientBoostingClassifier':model_for_final_test=HistGradientBoostingClassifier(**model_hyperparams);
+        elif model_type=='RandomForestClassifier':model_for_final_test=RandomForestClassifier(**model_hyperparams);
+        elif model_type=='XGBClassifier':model_for_final_test=XGBClassifier(**model_hyperparams);
+        elif model_type=='LGBMClassifier':model_for_final_test=LGBMClassifier(**model_hyperparams);
+        elif model_type=='LogisticRegression':model_for_final_test=LogisticRegression(**model_hyperparams);
+        elif model_type=='PassiveAggressiveClassifier':model_for_final_test=PassiveAggressiveClassifier(**model_hyperparams);
+        elif model_type=='Perceptron':model_for_final_test=Perceptron(**model_hyperparams);
+        elif model_type=='RidgeClassifier':model_for_final_test=RidgeClassifier(**model_hyperparams);
+        elif model_type=='SGDClassifier':model_for_final_test=SGDClassifier(**model_hyperparams);
+    elif problem_type=='regression':
+        if model_type=='LinearRegression':model_for_final_test=LinearRegression(**model_hyperparams);
+        elif model_type=='Ridge':model_for_final_test=Ridge(**model_hyperparams);
+        elif model_type=='SGDRegressor':model_for_final_test=SGDRegressor(**model_hyperparams);
+        elif model_type=='ElasticNet':model_for_final_test=ElasticNet(**model_hyperparams);
+        elif model_type=='Lars':model_for_final_test=Lars(**model_hyperparams);
+        elif model_type=='Lasso':model_for_final_test=Lasso(**model_hyperparams);
+        elif model_type=='LassoLars':model_for_final_test=LassoLars(**model_hyperparams);
+        elif model_type=='LassoLarsIC':model_for_final_test=LassoLarsIC(**model_hyperparams);
+        elif model_type=='ARDRegression':model_for_final_test=ARDRegression(**model_hyperparams);
+        elif model_type=='BayesianRidge':model_for_final_test=BayesianRidge(**model_hyperparams);
+        elif model_type=='MultiTaskElasticNet':model_for_final_test=MultiTaskElasticNet(**model_hyperparams);
+        elif model_type=='MultiTaskLasso':model_for_final_test=MultiTaskLasso(**model_hyperparams);
+        elif model_type=='HuberRegressor':model_for_final_test=HuberRegressor(**model_hyperparams);
+        elif model_type=='QuantileRegressor':model_for_final_test=QuantileRegressor(**model_hyperparams);
+        elif model_type=='RANSACRegressor':model_for_final_test=RANSACRegressor(**model_hyperparams);
+        elif model_type=='TheilSenRegressor':model_for_final_test=TheilSenRegressor(**model_hyperparams);
+        elif model_type=='GammaRegressor':model_for_final_test=GammaRegressor(**model_hyperparams);
+        elif model_type=='PoissonRegressor':model_for_final_test=PoissonRegressor(**model_hyperparams);
+        elif model_type=='TweedieRegressor':model_for_final_test=TweedieRegressor(**model_hyperparams);
+        elif model_type=='PassiveAggressiveRegressor':model_for_final_test=PassiveAggressiveRegressor(**model_hyperparams);
+        elif model_type=='AdaBoostRegressor':model_for_final_test=AdaBoostRegressor(**model_hyperparams);
+        elif model_type=='BaggingRegressor':model_for_final_test=BaggingRegressor(**model_hyperparams);
+        elif model_type=='ExtraTreesRegressor':model_for_final_test=ExtraTreesRegressor(**model_hyperparams);
+        elif model_type=='GradientBoostingRegressor':model_for_final_test=GradientBoostingRegressor(**model_hyperparams);
+        elif model_type=='HistGradientBoostingRegressor':model_for_final_test=HistGradientBoostingRegressor(**model_hyperparams);
+        elif model_type=='RandomForestRegressor':model_for_final_test=RandomForestRegressor(**model_hyperparams);
     model_for_final_test.fit(X=X_train_cv_feature_selected,y=y_train_cv);#Обучение на 80% открытых данных
     y_test_pred=model_for_final_test.predict(X_test_final_feature_selected);#Тестирование на 20% открытых данных
     if problem_type=='classification':
@@ -1049,7 +1171,8 @@ def run_one_pipeline_experiment_v1(num_features_select_from_all_min:int=5,num_fe
 
     #7.1. Использование imputer (если выбрано) для production
     if use_imputer==True:
-        imputer_production:AnyImputer=imputer_constructors_dict[imputer_type](**imputer_hyperparams);
+        if imputer_type=='KNNImputer':imputer_production=KNNImputer(**imputer_hyperparams);
+        elif imputer_type=='SimpleImputer':imputer_production=SimpleImputer(**imputer_hyperparams);
         imputer_production.fit(X=X_all,y=y_all);
         X_all_imputed=imputer_production.transform(X=X_all);
     else:
@@ -1067,7 +1190,10 @@ def run_one_pipeline_experiment_v1(num_features_select_from_all_min:int=5,num_fe
 
     #7.3. Использование scaler (если выбрано) для production
     if use_scaler==True:
-        scaler_production:AnyScaler=scaler_constructors_dict[scaler_type](**scaler_hyperparams);
+        if scaler_type=='MaxAbsScaler':scaler_production=MaxAbsScaler(**scaler_hyperparams);
+        elif scaler_type=='MinMaxScaler':scaler_production=MinMaxScaler(**scaler_hyperparams);
+        elif scaler_type=='RobustScaler':scaler_production=RobustScaler(**scaler_hyperparams);
+        elif scaler_type=='StandardScaler':scaler_production=StandardScaler(**scaler_hyperparams);
         scaler_production.fit(X=X_all_var_thresholded);
         X_all_scaled=scaler_production.transform(X=X_all_var_thresholded);
     else:
@@ -1082,10 +1208,48 @@ def run_one_pipeline_experiment_v1(num_features_select_from_all_min:int=5,num_fe
             elif fs_score_func_type=='chi2':score_func_production:callable=chi2;
             elif fs_score_func_type=='f_regression':score_func_production:callable=f_regression;
             elif fs_score_func_type=='mutual_info_regression':score_func_production:callable=mutual_info_regression;
-            feature_selector_production:AnyFeatureSelector=feature_selector_constructors_dict[feature_selector_type](**feature_selector_hyperparams);
+            if feature_selector_type=='GenericUnivariateSelect':feature_selector_production=GenericUnivariateSelect(score_func=score_func_production,**feature_selector_hyperparams);
+            elif feature_selector_type=='SelectFdr':feature_selector_production=SelectFdr(score_func=score_func_production,**feature_selector_hyperparams);
+            elif feature_selector_type=='SelectFpr':feature_selector_production=SelectFpr(score_func=score_func_production,**feature_selector_hyperparams);
+            elif feature_selector_type=='SelectFwe':feature_selector_production=SelectFwe(score_func=score_func_production,**feature_selector_hyperparams);
+            elif feature_selector_type=='SelectKBest':feature_selector_production=SelectKBest(score_func=score_func_production,**feature_selector_hyperparams);
+            elif feature_selector_type=='SelectPercentile':feature_selector_production=SelectPercentile(score_func=score_func_production,**feature_selector_hyperparams);
+        elif feature_selector_type=='VarianceThreshold':feature_selector_production=VarianceThreshold(**feature_selector_hyperparams);
         elif feature_selector_type in feature_selector_types_estimator_all:
-            fs_estimator_production:AnyFSEstimator=fs_estimator_constructors_dict[fs_estimator_type](**fs_estimator_hyperparams);
-            feature_selector_production:AnyFeatureSelector=feature_selector_constructors_dict[feature_selector_type](estimator=fs_estimator_production,**feature_selector_hyperparams);
+            if fs_estimator_type=='LogisticRegression':fs_estimator_production=LogisticRegression(**fs_estimator_hyperparams);
+            elif fs_estimator_type=='PassiveAggressiveClassifier':fs_estimator_production=PassiveAggressiveClassifier(**fs_estimator_hyperparams);
+            elif fs_estimator_type=='Perceptron':fs_estimator_production=Perceptron(**fs_estimator_hyperparams);
+            elif fs_estimator_type=='RidgeClassifier':fs_estimator_production=RidgeClassifier(**fs_estimator_hyperparams);
+            elif fs_estimator_type=='SGDClassifier':fs_estimator_production=SGDClassifier(**fs_estimator_hyperparams);
+            elif fs_estimator_type=='LinearRegression':fs_estimator_production=LinearRegression(**fs_estimator_hyperparams);
+            elif fs_estimator_type=='Ridge':fs_estimator_production=Ridge(**fs_estimator_hyperparams);
+            elif fs_estimator_type=='SGDRegressor':fs_estimator_production=SGDRegressor(**fs_estimator_hyperparams);
+            elif fs_estimator_type=='ElasticNet':fs_estimator_production=ElasticNet(**fs_estimator_hyperparams);
+            elif fs_estimator_type=='Lars':fs_estimator_production=Lars(**fs_estimator_hyperparams);
+            elif fs_estimator_type=='Lasso':fs_estimator_production=Lasso(**fs_estimator_hyperparams);
+            elif fs_estimator_type=='LassoLars':fs_estimator_production=LassoLars(**fs_estimator_hyperparams);
+            elif fs_estimator_type=='LassoLarsIC':fs_estimator_production=LassoLarsIC(**fs_estimator_hyperparams);
+            elif fs_estimator_type=='OrthogonalMatchingPursuit':fs_estimator_production=OrthogonalMatchingPursuit(**fs_estimator_hyperparams);
+            elif fs_estimator_type=='ARDRegression':fs_estimator_production=ARDRegression(**fs_estimator_hyperparams);
+            elif fs_estimator_type=='BayesianRidge':fs_estimator_production=BayesianRidge(**fs_estimator_hyperparams);
+            elif fs_estimator_type=='HuberRegressor':fs_estimator_production=HuberRegressor(**fs_estimator_hyperparams);
+            elif fs_estimator_type=='QuantileRegressor':fs_estimator_production=QuantileRegressor(**fs_estimator_hyperparams);
+            elif fs_estimator_type=='RANSACRegressor':fs_estimator_production=RANSACRegressor(**fs_estimator_hyperparams);
+            elif fs_estimator_type=='TheilSenRegressor':fs_estimator_production=TheilSenRegressor(**fs_estimator_hyperparams);
+            elif fs_estimator_type=='GammaRegressor':fs_estimator_production=GammaRegressor(**fs_estimator_hyperparams);
+            elif fs_estimator_type=='PoissonRegressor':fs_estimator_production=PoissonRegressor(**fs_estimator_hyperparams);
+            elif fs_estimator_type=='TweedieRegressor':fs_estimator_production=TweedieRegressor(**fs_estimator_hyperparams);
+            elif fs_estimator_type=='PassiveAggressiveRegressor':fs_estimator_production=PassiveAggressiveRegressor(**fs_estimator_hyperparams);
+            elif fs_estimator_type=='LinearSVC':fs_estimator_production=LinearSVC(**fs_estimator_hyperparams);
+            elif fs_estimator_type=='NuSVC':fs_estimator_production=NuSVC(**fs_estimator_hyperparams);
+            elif fs_estimator_type=='SVC':fs_estimator_production=SVC(**fs_estimator_hyperparams);
+            elif fs_estimator_type=='LinearSVR':fs_estimator_production=LinearSVR(**fs_estimator_hyperparams);
+            elif fs_estimator_type=='NuSVR':fs_estimator_production=NuSVR(**fs_estimator_hyperparams);
+            elif fs_estimator_type=='SVR':fs_estimator_production=SVR(**fs_estimator_hyperparams);
+            if feature_selector_type=='RFE':feature_selector_production=RFE(estimator=fs_estimator_production,**feature_selector_hyperparams);
+            elif feature_selector_type=='RFECV':feature_selector_production=RFECV(estimator=fs_estimator_production,**feature_selector_hyperparams);
+            elif feature_selector_type=='SelectFromModel':feature_selector_production=SelectFromModel(estimator=fs_estimator_production,**feature_selector_hyperparams);
+            elif feature_selector_type=='SequentialFeatureSelector':feature_selector_production=SequentialFeatureSelector(estimator=fs_estimator_production,**feature_selector_hyperparams);
         feature_selector_production.fit(X=X_all_scaled,y=y_all);
         X_all_feature_selected=feature_selector_production.transform(X=X_all_scaled);
     else:#Если use_feature_selector==False
@@ -1096,16 +1260,57 @@ def run_one_pipeline_experiment_v1(num_features_select_from_all_min:int=5,num_fe
         return error_str;
 
     #7.5. Использование model (всегда выбрано) для production
-    model_production:AnyModel=model_constructors_dict[model_type](**model_hyperparams);
+    if problem_type=='classification':
+        if model_type=='AdaBoostClassifier':model_production=AdaBoostClassifier(**model_hyperparams);
+        elif model_type=='BaggingClassifier':model_production=BaggingClassifier(**model_hyperparams);
+        elif model_type=='ExtraTreesClassifier':model_production=ExtraTreesClassifier(**model_hyperparams);
+        elif model_type=='GradientBoostingClassifier':model_production=GradientBoostingClassifier(**model_hyperparams);
+        elif model_type=='HistGradientBoostingClassifier':model_production=HistGradientBoostingClassifier(**model_hyperparams);
+        elif model_type=='RandomForestClassifier':model_production=RandomForestClassifier(**model_hyperparams);
+        elif model_type=='XGBClassifier':model_production=XGBClassifier(**model_hyperparams);
+        elif model_type=='LGBMClassifier':model_production=LGBMClassifier(**model_hyperparams);
+        elif model_type=='LogisticRegression':model_production=LogisticRegression(**model_hyperparams);
+        elif model_type=='PassiveAggressiveClassifier':model_production=PassiveAggressiveClassifier(**model_hyperparams);
+        elif model_type=='Perceptron':model_production=Perceptron(**model_hyperparams);
+        elif model_type=='RidgeClassifier':model_production=RidgeClassifier(**model_hyperparams);
+        elif model_type=='SGDClassifier':model_production=SGDClassifier(**model_hyperparams);
+    elif problem_type=='regression':
+        if model_type=='LinearRegression':model_production=LinearRegression(**model_hyperparams);
+        elif model_type=='Ridge':model_production=Ridge(**model_hyperparams);
+        elif model_type=='SGDRegressor':model_production=SGDRegressor(**model_hyperparams);
+        elif model_type=='ElasticNet':model_production=ElasticNet(**model_hyperparams);
+        elif model_type=='Lars':model_production=Lars(**model_hyperparams);
+        elif model_type=='Lasso':model_production=Lasso(**model_hyperparams);
+        elif model_type=='LassoLars':model_production=LassoLars(**model_hyperparams);
+        elif model_type=='LassoLarsIC':model_production=LassoLarsIC(**model_hyperparams);
+        elif model_type=='ARDRegression':model_production=ARDRegression(**model_hyperparams);
+        elif model_type=='BayesianRidge':model_production=BayesianRidge(**model_hyperparams);
+        elif model_type=='MultiTaskElasticNet':model_production=MultiTaskElasticNet(**model_hyperparams);
+        elif model_type=='MultiTaskLasso':model_production=MultiTaskLasso(**model_hyperparams);
+        elif model_type=='HuberRegressor':model_production=HuberRegressor(**model_hyperparams);
+        elif model_type=='QuantileRegressor':model_production=QuantileRegressor(**model_hyperparams);
+        elif model_type=='RANSACRegressor':model_production=RANSACRegressor(**model_hyperparams);
+        elif model_type=='TheilSenRegressor':model_production=TheilSenRegressor(**model_hyperparams);
+        elif model_type=='GammaRegressor':model_production=GammaRegressor(**model_hyperparams);
+        elif model_type=='PoissonRegressor':model_production=PoissonRegressor(**model_hyperparams);
+        elif model_type=='TweedieRegressor':model_production=TweedieRegressor(**model_hyperparams);
+        elif model_type=='PassiveAggressiveRegressor':model_production=PassiveAggressiveRegressor(**model_hyperparams);
+        elif model_type=='AdaBoostRegressor':model_production=AdaBoostRegressor(**model_hyperparams);
+        elif model_type=='BaggingRegressor':model_production=BaggingRegressor(**model_hyperparams);
+        elif model_type=='ExtraTreesRegressor':model_production=ExtraTreesRegressor(**model_hyperparams);
+        elif model_type=='GradientBoostingRegressor':model_production=GradientBoostingRegressor(**model_hyperparams);
+        elif model_type=='HistGradientBoostingRegressor':model_production=HistGradientBoostingRegressor(**model_hyperparams);
+        elif model_type=='RandomForestRegressor':model_production=RandomForestRegressor(**model_hyperparams);
     model_production.fit(X=X_all_feature_selected,y=y_all);
 
     # 8. Генерация ID пайплайна и сохранение Production-пайплайна
     pipeline_id:str=''.join(random.choices(population=string.ascii_uppercase+string.digits,k=16));
-    pipeline_filename:str=f"pipeline_{pipeline_id}.pkl";
+    filename:str=f"pipeline_{pipeline_id}.pkl";
 
     # Сохраняем production-пайплайн (именно production imputer, var_thresholder, scaler, feature_selector, model)
-    with open(file=pipeline_filename,mode='wb')as f:pickle.dump(obj={'n_features_selected_randomly':n_features_selected_randomly,'randomly_selected_indexes':randomly_selected_indexes,'imputer':imputer_production,'var_thresholder':var_thresholder_production,'scaler':scaler_production,'feature_selector':feature_selector_production,'fs_score_func_type':fs_score_func_type,'fs_estimator_type':fs_estimator_type,'model':model_production},file=f);
-    pipeline_file_size:int=os.path.getsize(filename=pipeline_filename);
+    with open(file=filename,mode='wb')as f:pickle.dump(obj={'n_features_selected_randomly':n_features_selected_randomly,'randomly_selected_indexes':randomly_selected_indexes,'imputer':imputer_production,'var_thresholder':var_thresholder_production,'scaler':scaler_production,'feature_selector':feature_selector_production,'fs_score_func_type':fs_score_func_type,'fs_estimator_type':fs_estimator_type,'model':model_production},file=f);
+    #print(f"Финальный пайплайн сохранён в файл: {filename}")
+
     scores_valid_str:str='['+', '.join([f"{s:.6f}" for s in scores_valid])+']';
 
     seconds_pipe_finish:float=time.time();#Для лога (чтобы вычислить время обработки этого пайплайна)
@@ -1141,14 +1346,13 @@ score_valid_mean: {score_valid_mean}
 score_valid_std: {score_valid_std}
 score_test: {score_test}
 dt_pipe_start_str: {dt_pipe_start_str}
-seconds_pipe_start: {seconds_pipe_start}, seconds_pipe_finish: {seconds_pipe_finish}, seconds_processing: {seconds_processing}
-pipeline_file_size (bytes): {pipeline_file_size}
+seconds_processing: {seconds_processing}
 ---------------------------------------
 """
     #Никакие гиперпараметры (feature_selector_hyperparams, scaler_hyperparams, model_hyperparams) не записываются в csv файл, так как они
     #представляют собой словарь (dict), пары key:value которого записываются через запятую, что нарушило бы консистентность строк csv файла,
     #потому что эти словари у разных пайплайнов имеют разное количество значений (у разных типов моделей разное количество киперпараметров)
-    log_record_csv:str=f'{pipeline_id},{n_features_all},{n_features_selected_randomly},{use_imputer},{imputer_type},{use_var_thresholder},{var_thresholder_type},{use_scaler},{scaler_type},{use_feature_selector},{feature_selector_type},{fs_score_func_type},{fs_estimator_type},{model_type},{score_type},{score_valid_mean},{score_valid_std},{score_test},{dt_pipe_start_str},{seconds_processing},{pipeline_file_size}\n';
+    log_record_csv:str=f'{pipeline_id},{n_features_all},{n_features_selected_randomly},{use_imputer},{imputer_type},{use_var_thresholder},{var_thresholder_type},{use_scaler},{scaler_type},{use_feature_selector},{feature_selector_type},{fs_score_func_type},{fs_estimator_type},{model_type},{score_type},{score_valid_mean},{score_valid_std},{score_test},{dt_pipe_start_str},{seconds_processing}\n';
     print(log_record_txt);
     with open(file='log_pipelines.txt',mode='at',encoding='UTF-8')as log_file:log_file.write(log_record_txt);
     with open(file='log_pipelines.csv',mode='at',encoding='UTF-8')as log_file:log_file.write(log_record_csv);
@@ -1181,11 +1385,11 @@ def create_predictions_files(pipeline_ids:list[str],digits_round_min:int=1,digit
         print(f'pipeline_id: {pipeline_id}, pipeline_dict: {pipeline_dict}');
         n_features_selected_randomly:int=pipeline_dict['n_features_selected_randomly'];
         randomly_selected_indexes:list[int]=pipeline_dict['randomly_selected_indexes'];
-        imputer:AnyImputer=pipeline_dict['imputer'];#imputer можкт быть None
+        imputer:KNNImputer|SimpleImputer=pipeline_dict['imputer'];#imputer можкт быть None
         var_thresholder:VarianceThreshold=pipeline_dict['var_thresholder'];#var_thresholder может быть None
-        scaler:AnyScaler|None=pipeline_dict['scaler'];#scaler может быть None
-        feature_selector:AnyFeatureSelector|None=pipeline_dict['feature_selector'];#feature_selector может быть None
-        model:AnyModel=pipeline_dict['model'];#model не может быть None
+        scaler:MaxAbsScaler|MinMaxScaler|RobustScaler|StandardScaler|None=pipeline_dict['scaler'];#scaler может быть None
+        feature_selector:GenericUnivariateSelect|RFE|RFECV|SelectFdr|SelectFpr|SelectFromModel|SelectFwe|SelectKBest|SelectPercentile|SequentialFeatureSelector|VarianceThreshold|None=pipeline_dict['feature_selector'];#feature_selector может быть None
+        model=pipeline_dict['model'];#model не может быть None
         print(f'pipeline_id: {pipeline_id}');
         print(f'model.__dict__: {model.__dict__}');#model точно не None
         if feature_selector is not None:print(f'feature_selector.__dict__: {feature_selector.__dict__}');
@@ -1353,7 +1557,7 @@ def create_coefs_and_bias_files(pipeline_ids:list[str],digits_round_min:int=2,di
     pass;
 
 #Действия, выполняемые перед каждым запуском:
-opened_data_all_features,opened_target,opened_ids,closed_data_all_features,closed_target,closed_ids=load_data_from_npy(rewrite_features_csv_files=False);
+opened_data_all_features,opened_target,opened_ids,closed_data_all_features,closed_target,closed_ids=load_data_from_npy(rewrite_features_csv_files=True);
 create_log_files();
 
 #Основной цикл программы:
@@ -1386,35 +1590,23 @@ while command_num>-1:
             num_features_select_from_all_max:int=int(input('Введите максимальное количество случайно отбираемых признаков в каждом эксперименте (или 0 для использования всех признаков): '));
         else:randomly_selected_indexes:list[int]=[int(num)for num in randomly_selected_indexes_str.split(sep=' ')];
         use_only_linear_models_str:str=input(f'Использовать только полностью линейные модели (имеющие атрибуты coef_ и intercept_) [1=True, 0=False, ничего=False]: ');
-        if use_only_linear_models_str in['','0','False','false','F','f']:use_only_linear_models:bool=False;
-        elif use_only_linear_models_str in['1','True','true','T','t']:use_only_linear_models:bool=True;
+        if len(use_only_linear_models_str)==0:
+            use_only_linear_models:bool=False;
+        elif use_only_linear_models_str in['0','False','false']:use_only_linear_models:bool=False;
+        elif use_only_linear_models_str in['1','True','true']:use_only_linear_models:bool=True;
         use_imputer_probability:float=str_to_float(s=input(f'Введите вероятность использования imputer в каждом эксперименте (от 0.0 до 1.0) [если 0.0 то imputer никогда не используется, если 1.0 то imputer используется в каждом эксперименте, если 0.5 то imputer используется примерно в половине экспериментов]: '),num_min=0.0,num_max=1.0,num_default=0.9);
         use_var_thresholder_probability:float=str_to_float(s=input(f'Введите вероятность использования var_thresholder в каждом эксперименте (от 0.0 до 1.0) [если 0.0 то var_thresholder никогда не используется, если 1.0 то var_thresholder используется в каждом эксперименте, если 0.5 то var_thresholder используется примерно в половине экспериментов]: '),num_min=0.0,num_max=1.0,num_default=0.9);
         use_scaler_probability:float=str_to_float(s=input(f'Введите вероятность использования scaler в каждом эксперименте (от 0.0 до 1.0) [если 0.0 то scaler никогда не используется, если 1.0 то scaler используется в каждом эксперименте, если 0.5 то scaler используется примерно в половине экспериментов]: '),num_min=0.0,num_max=1.0,num_default=0.95);
         use_feature_selector_probability:float=str_to_float(s=input(f'Введите вероятность использования feature_selector в каждом эксперименте (от 0.0 до 1.0) [если 0.0 то feature_selector никогда не используется, если 1.0 то feature_selector используется в каждом эксперименте, если 0.5 то feature_selector используется примерно в половине экспериментов]: '),num_min=0.0,num_max=1.0,num_default=0.9);
-        prefered_scaler_types_str:str=input(f'Введите строку с предпочтительными типами scaler (разделяя их через пробел) [все типы scaler: MaxAbsScaler MinMaxScaler RobustScaler StandardScaler] или просто Enter чтобы не выбирать предпочтительные типы scaler: ');
-        prefered_feature_selector_types_str:str=input(f'Введите строку с предпочтительными типами feature_selector (разделяя их через пробел) [все типы feature_selector: GenericUnivariateSelect SelectFdr SelectFpr SelectFwe SelectKBest SelectPercentile SelectFromModel RFE RFECV SequentialFeatureSelector] или просто Enter чтобы не выбирать предпочтительные типы feature_selector: ');
-        prefered_fs_estimator_types_str:str=input(f'Введите строку с предпочтительными типами fs_estimator (разделяя их через пробел) [все типы fs_estimator: LogisticRegression PassiveAggressiveClassifier Perceptron RidgeClassifier SGDClassifier LinearRegression Ridge Lasso ElasticNet Lars LassoLars SGDRegressor LassoLarsIC OrthogonalMatchingPursuit ARDRegression BayesianRidge HuberRegressor QuantileRegressor RANSACRegressor TheilSenRegressor GammaRegressor PoissonRegressor TweedieRegressor PassiveAggressiveRegressor] или просто Enter чтобы не выбирать предпочтительные типы fs_estimator: ');
-        prefered_model_types_str:str=input(f'Введите строку с предпочтительными типами model (разделяя их через пробел) [все типы model: AdaBoostClassifier BaggingClassifier ExtraTreesClassifier GradientBoostingClassifier HistGradientBoostingClassifier RandomForestClassifier XGBClassifier LGBMClassifier XGBRFClassifier DaskLGBMClassifier GaussianProcessClassifier BernoulliNB ComplementNB GaussianNB MultinomialNB LogisticRegression PassiveAggressiveClassifier Perceptron RidgeClassifier SGDClassifier KNeighborsClassifier NearestCentroid RadiusNeighborsClassifier MLPClassifier LinearRegression Ridge SGDRegressor ElasticNet Lars Lasso LassoLars LassoLarsIC ARDRegression BayesianRidge HuberRegressor QuantileRegressor RANSACRegressor TheilSenRegressor GammaRegressor PoissonRegressor TweedieRegressor PassiveAggressiveRegressor AdaBoostRegressor BaggingRegressor ExtraTreesRegressor GradientBoostingRegressor HistGradientBoostingRegressor RandomForestRegressor XGBRegressor XGBRFRegressor LGBMRegressor DaskLGBMRegressor GaussianProcessRegressor KNeighborsRegressor RadiusNeighborsRegressor MLPRegressor] или просто Enter чтобы не выбирать предпочтительные типы model: ');
-        if prefered_scaler_types_str=='':prefered_scaler_types:list[str]=None;
-        else:prefered_scaler_types:list[str]=prefered_scaler_types_str.replace('  ',' ').split(sep=' ');
-        if prefered_feature_selector_types_str=='':prefered_feature_selector_types:list[str]=None;
-        else:prefered_feature_selector_types:list[str]=prefered_feature_selector_types_str.replace('  ',' ').split(sep=' ');
-        if prefered_fs_estimator_types_str=='':prefered_fs_estimator_types:list[str]=None;
-        else:prefered_fs_estimator_types:list[str]=prefered_fs_estimator_types_str.replace('  ',' ').split(sep=' ');
-        if prefered_model_types_str=='':prefered_model_types:list[str]=None;
-        else:prefered_model_types:list[str]=prefered_model_types_str.replace('  ',' ').split(sep=' ');
-        n_cpu_cores:int=int(input(f'Введите количество потоков процессора для использования в обучении некоторых моделей (-1 для использования всех потоков, -2 для использования всех потоков кроме одного и т.д.): '));
-
 
         for i in range(num_of_experiments):
             try:
                 print(f'Эксперимент {i+1}/{num_of_experiments}... ',end='');
                 pipeline_id:str=run_one_pipeline_experiment_v1(num_features_select_from_all_min=num_features_select_from_all_min,num_features_select_from_all_max=num_features_select_from_all_max,randomly_selected_indexes=randomly_selected_indexes,problem_type='regression',task_output='mono_output',score_type='mean_squared_error',
-                use_imputer_probability=use_imputer_probability,use_var_thresholder_probability=use_var_thresholder_probability,use_scaler_probability=use_scaler_probability,prefered_scaler_types=prefered_scaler_types,use_feature_selector_probability=use_feature_selector_probability,prefered_feature_selector_types=prefered_feature_selector_types,prefered_fs_estimator_types=prefered_fs_estimator_types,scaler_type=None,scaler_hyperparams=None,model_type=None,prefered_model_types=prefered_model_types,model_hyperparams=None,num_folds=10,score_valid_min_threshold=None,score_valid_max_threshold=0.10,use_only_linear_models=use_only_linear_models,n_cpu_cores=n_cpu_cores);
+                use_imputer_probability=use_imputer_probability,use_var_thresholder_probability=use_var_thresholder_probability,use_scaler_probability=use_scaler_probability,use_feature_selector_probability=use_feature_selector_probability,scaler_type=None,scaler_hyperparams=None,model_type=None,model_hyperparams=None,num_folds=10,score_valid_min_threshold=None,score_valid_max_threshold=0.10,use_only_linear_models=use_only_linear_models);
             except Exception as ex:
                 print(f'Возникло исключение, type(ex): {type(ex)}, ex: {ex}');
-    elif command_num==2:#2 => создать json и tsv файлы с предсказанием пайплайна или средним предсказанием нескольких пайплайнов из списка их id
+    elif command_num==2:#2 => создать json файл с предсказанием пайплайна или средним предсказанием нескольких пайплайнов из списка их id
         pipeline_ids_str:str=input('Введите id пайплайна или нескольких пайплайнов через запятую или пробел (например, [08JZRAWXBE5N43MX] или [08JZRAWXBE5N43MX,2352C29OXLDYGPAL,J0KZOWU71FHE3TCR,EENT8VMHI4CK4D24]) (БЕЗ КВАДРАТНЫХ СКОБОК): ');
         digits_round_min,digits_round_max=[int(num_s)for num_s in input('Введите минимальное и максимальное количество цифр округления (например, 2 18): ').split(sep=' ')]
         if ','in pipeline_ids_str:pipeline_ids_list:list[str]=pipeline_ids_str.split(sep=',');

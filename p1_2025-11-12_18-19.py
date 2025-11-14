@@ -5,7 +5,6 @@ from sklearn.preprocessing import MaxAbsScaler,MinMaxScaler,RobustScaler,Standar
 from sklearn.model_selection import train_test_split,KFold,StratifiedKFold;
 from sklearn.impute import KNNImputer,SimpleImputer;
 #Импорты для классификации:
-#!!!predict_proba A method in classifiers and clusterers that can return probability estimates for each class/cluster.
 from sklearn.linear_model import LogisticRegression,PassiveAggressiveClassifier,Perceptron,RidgeClassifier,SGDClassifier;
 from sklearn.ensemble import AdaBoostClassifier,BaggingClassifier,ExtraTreesClassifier,GradientBoostingClassifier;
 from sklearn.ensemble import HistGradientBoostingClassifier,RandomForestClassifier;
